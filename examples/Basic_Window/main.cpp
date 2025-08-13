@@ -1,8 +1,13 @@
 #include "Application.h"
+#include "Window.h"
+#include "MainWindow.h"
 
 int main() {
     OpenGLGui::Application app;
-    app.setWindowTitle("Basic Window Example");
+    OpenGLGui::MainWindow window;
+    OpenGLGui::Window dialog;
+    window.setWindowTitle("Basic Window Example");
+    dialog.setWindowTitle("Dialog");
 
     return app.run();
 }
