@@ -1,5 +1,6 @@
 #pragma once
 
+#include <glad/gl.h>
 #include <GLFW/glfw3.h>
 
 namespace OpenGLGui {
@@ -11,8 +12,10 @@ public:
 
     void setWindowTitle(const char* title);
     GLFWwindow* getGLFWwindow() const { return window; }
+    GladGLContext* getGladContext() const { return gladContext; }
 
 private:
+    GladGLContext* gladContext = nullptr;
     GLFWwindow* window;
 };
 

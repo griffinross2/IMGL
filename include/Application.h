@@ -5,10 +5,11 @@
 
 #include <vector>
 
+#include <glad/gl.h>
 #include <GLFW/glfw3.h>
 
 namespace OpenGLGui {
-    
+
 class Application {
 public:
 Application();
@@ -19,7 +20,7 @@ Application();
     }
 
     void addWindow(Window *window) {
-        windows.push_back(window->getGLFWwindow());
+        windows.push_back(window);
     }
 
     int run();
@@ -27,7 +28,7 @@ Application();
 
 private:
     MainWindow* mainWindow = nullptr;
-    std::vector<GLFWwindow*> windows;
+    std::vector<Window*> windows;
 };
 
 }

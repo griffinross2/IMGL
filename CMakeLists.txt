@@ -62,6 +62,31 @@ if(glm_POPULATED)
     message(STATUS "Binary directory: ${glm_BINARY_DIR}")
 endif()
 
+# GLAD
+FetchContent_Declare(
+    glad
+    GIT_REPOSITORY https://github.com/Dav1dde/glad.git
+    GIT_TAG v2.0.8
+)
+
+FetchContent_MakeAvailable(glad)
+
+FetchContent_GetProperties(glad
+    POPULATED glad_POPULATED
+    SOURCE_DIR glad_SOURCE_DIR
+    BINARY_DIR glad_BINARY_DIR
+)
+
+if(glad_POPULATED)
+    message(STATUS "glad has been populated.")
+    message(STATUS "Source directory: ${glad_SOURCE_DIR}")
+    message(STATUS "Binary directory: ${glad_BINARY_DIR}")
+endif()
+
+# Generate glad
+add_subdirectory("${glad_SOURCE_DIR}/cmake" glad_cmake)
+glad_add_library(glad_gl_core_45 REPRODUCIBLE MX API gl:core=4.5)
+
 # FreeType
 set(FT_DISABLE_BROTLI)
 set(FT_DISABLE_PNG)
@@ -99,10 +124,12 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 add_subdirectory(src)
 
 # Link libraries
-target_link_libraries(${PROJECT_NAME} PRIVATE 
+target_link_libraries(${PROJECT_NAME} PUBLIC
     glfw
     glm::glm-header-only
-    freetype)
+    freetype
+    glad_gl_core_45
+)
 
 # Bring in shaders
 add_custom_command(

@@ -18,21 +18,27 @@ OpenGLGui::Application::~Application() {
 
 int OpenGLGui::Application::run() {
     double lastTime = glfwGetTime();
+    int frameCount = 0;
 
     // Check if main window is open
     while (!glfwWindowShouldClose(mainWindow->getGLFWwindow())) {
-        for (auto window : windows) {
-            glfwMakeContextCurrent(window);
-            if (glfwWindowShouldClose(window)) {
-                continue;
-            }
-            glfwSwapBuffers(window);
+        for (Window* window : windows) {
+            glfwMakeContextCurrent(window->getGLFWwindow());
+
+            window->getGladContext()->Clear(GL_COLOR_BUFFER_BIT);
+
+            glfwSwapBuffers(window->getGLFWwindow());
             glfwPollEvents();
         }
-        double currentTime = glfwGetTime();
-        double deltaTime = currentTime - lastTime;
-        lastTime = currentTime;
-        std::cout << deltaTime * 1000.0 << " ms" << std::endl;
+        frameCount++;
+
+        if (glfwGetTime() - lastTime >= 1.0) {
+            mainWindow->setWindowTitle(
+                ("FPS: " + std::to_string(frameCount)).c_str()
+            );
+            frameCount = 0;
+            lastTime = glfwGetTime();
+        }
     }
     return 0;
 }
