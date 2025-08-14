@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.26)
-project(Basic-Window)
+project(Basic_Window)
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 23)

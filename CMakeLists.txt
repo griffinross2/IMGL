@@ -85,7 +85,7 @@ endif()
 
 # Generate glad
 add_subdirectory("${glad_SOURCE_DIR}/cmake" glad_cmake)
-glad_add_library(glad_gl_core_45 REPRODUCIBLE MX API gl:core=4.5)
+glad_add_library(glad_gl_core_45 REPRODUCIBLE API gl:core=4.5)
 
 # FreeType
 set(FT_DISABLE_BROTLI)

@@ -1,8 +1,5 @@
 #pragma once
 
-#include "Window.h"
-#include "MainWindow.h"
-
 #include <vector>
 
 #include <glad/gl.h>
@@ -12,23 +9,19 @@ namespace OpenGLGui {
 
 class Application {
 public:
-Application();
+    Application();
     ~Application();
 
-    void setMainWindow(MainWindow *window) {
-        mainWindow = window;
-    }
+    static void setWindowTitle(const char* title);
+    static bool shouldClose();
+    static void draw();
+    static unsigned int height();
+    static unsigned int width();
 
-    void addWindow(Window *window) {
-        windows.push_back(window);
-    }
-
-    int run();
     static Application* getInstance();
 
 private:
-    MainWindow* mainWindow = nullptr;
-    std::vector<Window*> windows;
+    GLFWwindow* glfwWindow = nullptr;
 };
 
 }

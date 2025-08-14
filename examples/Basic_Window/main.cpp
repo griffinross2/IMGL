@@ -1,13 +1,23 @@
 #include "Application.h"
-#include "Window.h"
-#include "MainWindow.h"
 
 int main() {
     OpenGLGui::Application app;
-    OpenGLGui::MainWindow window;
-    OpenGLGui::Window dialog(&window);
-    window.setWindowTitle("Basic Window Example");
-    dialog.setWindowTitle("Dialog");
+    app.setWindowTitle("Basic Window Example");
 
-    return app.run();
+    double lastTime = glfwGetTime();
+    int frameCount = 0;
+
+    // Check if main window is open
+    while (!OpenGLGui::Application::shouldClose()) {
+        OpenGLGui::Application::draw();
+
+        frameCount++;
+        if (glfwGetTime() - lastTime >= 1.0) {
+            OpenGLGui::Application::setWindowTitle(("FPS: " + std::to_string(frameCount)).c_str());
+            frameCount = 0;
+            lastTime = glfwGetTime();
+        }
+    }
+
+    return 0;
 }
