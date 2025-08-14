@@ -14,10 +14,13 @@ IMGL::Application::Application() {
     glfwMakeContextCurrent(glfwWindow);
     gladLoadGL(glfwGetProcAddress);
 
+    renderer = std::make_unique<Renderer>();
+
     s_instance = this;
 }
 
 IMGL::Application::~Application() {
+    Renderer::Destroy();
     glfwTerminate();
 }
 
@@ -27,14 +30,20 @@ void IMGL::Application::setWindowTitle(const char* title) {
     }
 }
 
+void IMGL::Application::setWindowSize(unsigned int width, unsigned int height) {
+    if (s_instance->glfwWindow) {
+        glfwSetWindowSize(s_instance->glfwWindow, static_cast<int>(width), static_cast<int>(height));
+    }
+}
+
 bool IMGL::Application::shouldClose() {
     return glfwWindowShouldClose(s_instance->glfwWindow);
 }
 
 void IMGL::Application::draw() {
     // Update window
-    glfwPollEvents();
     glfwMakeContextCurrent(s_instance->glfwWindow);
+    glfwPollEvents();
     
     // Update viewport
     int width, height;
@@ -46,6 +55,7 @@ void IMGL::Application::draw() {
     glClear(GL_COLOR_BUFFER_BIT);
 
     // Render the GUI
+    IMGL::Renderer::Render();
 
     glfwSwapBuffers(s_instance->glfwWindow);
     

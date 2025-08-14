@@ -1,0 +1,68 @@
+#include "Primitives.h"
+
+#include "Render.h"
+#include "Container.h"
+
+namespace IMGL {
+
+    void DrawRectangle(int x, int y, int width, int height, const Color& color) {
+        // Convert coordinates to screen space
+        ToScreenSpace(x, y);
+
+        // Draw the rectangle
+        RenderList& renderList = Renderer::get()->renderList;
+        unsigned int firstIdx = renderList.vertices.size() / 7;
+        unsigned int idxOff = renderList.indices.size();
+
+        // Bottom Left
+        renderList.vertices.push_back(static_cast<float>(x));
+        renderList.vertices.push_back(static_cast<float>(y));
+        renderList.vertices.push_back(0.0f); // z-coordinate
+        renderList.vertices.push_back(color.r);
+        renderList.vertices.push_back(color.g);
+        renderList.vertices.push_back(color.b);
+        renderList.vertices.push_back(color.a);
+
+        // Bottom Right
+        renderList.vertices.push_back(static_cast<float>(x + width));
+        renderList.vertices.push_back(static_cast<float>(y));
+        renderList.vertices.push_back(0.0f); // z-coordinate
+        renderList.vertices.push_back(color.r);
+        renderList.vertices.push_back(color.g);
+        renderList.vertices.push_back(color.b);
+        renderList.vertices.push_back(color.a);
+
+        // Top Right
+        renderList.vertices.push_back(static_cast<float>(x + width));
+        renderList.vertices.push_back(static_cast<float>(y + height));
+        renderList.vertices.push_back(0.0f); // z-coordinate
+        renderList.vertices.push_back(color.r);
+        renderList.vertices.push_back(color.g);
+        renderList.vertices.push_back(color.b);
+        renderList.vertices.push_back(color.a);
+
+        // Top Left
+        renderList.vertices.push_back(static_cast<float>(x));
+        renderList.vertices.push_back(static_cast<float>(y + height));
+        renderList.vertices.push_back(0.0f); // z-coordinate
+        renderList.vertices.push_back(color.r);
+        renderList.vertices.push_back(color.g);
+        renderList.vertices.push_back(color.b);
+        renderList.vertices.push_back(color.a);
+
+        // Add indices for the rectangle (two triangles)
+        renderList.indices.push_back(firstIdx);
+        renderList.indices.push_back(firstIdx + 1);
+        renderList.indices.push_back(firstIdx + 2);
+        renderList.indices.push_back(firstIdx);
+        renderList.indices.push_back(firstIdx + 2);
+        renderList.indices.push_back(firstIdx + 3);
+
+        // Add a draw command for the rectangle
+        DrawCommand drawCmd;
+        drawCmd.idxOff = idxOff;
+        drawCmd.idxCount = 6; // Two triangles, 6 indices
+        renderList.commands.push_back(drawCmd);
+    }
+
+}

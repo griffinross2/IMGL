@@ -20,3 +20,21 @@ target_sources(${PROJECT_NAME} PRIVATE
 target_include_directories(${PROJECT_NAME} PRIVATE "../../src")
 # add_subdirectory("../.." "${CMAKE_CURRENT_BINARY_DIR}/IMGL_build")
 target_link_libraries(${PROJECT_NAME} PRIVATE IMGL)
+
+# Bring in shaders
+add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+            "${CMAKE_CURRENT_SOURCE_DIR}/../../shaders/"
+            "${CMAKE_CURRENT_BINARY_DIR}/shaders"
+    COMMENT "Copying in shaders"
+)
+
+# Bring in fonts
+add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+            "${CMAKE_CURRENT_SOURCE_DIR}/../../fonts/"
+            "${CMAKE_CURRENT_BINARY_DIR}/fonts"
+    COMMENT "Copying in fonts"
+)

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Render.h"
+
 #include <vector>
 
 #include <glad/gl.h>
@@ -13,6 +15,7 @@ public:
     ~Application();
 
     static void setWindowTitle(const char* title);
+    static void setWindowSize(unsigned int width, unsigned int height);
     static bool shouldClose();
     static void draw();
     static unsigned int height();
@@ -22,6 +25,7 @@ public:
 
 private:
     GLFWwindow* glfwWindow = nullptr;
+    std::unique_ptr<Renderer> renderer;
 };
 
 }

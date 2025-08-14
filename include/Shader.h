@@ -1,0 +1,32 @@
+#pragma once
+
+#include <string>
+
+namespace IMGL {
+
+	// Shader.h
+	// This file contains the Shader class, which is used to load and compile shaders for OpenGL rendering.
+	// It provides methods to set uniforms and use the shader program.
+
+	class Shader
+	{
+
+	public:
+		unsigned int id;
+		// Constructor reads and builds the shader
+		Shader() = default;
+		Shader(const char* vertexPath, const char* fragmentPath);
+		Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath);
+		// Use/activate the shader
+		void use();
+		// Utility uniform functions
+		void setBool(const std::string& name, bool value);
+		void setInt(const std::string& name, int value);
+		void setFloat(const std::string& name, float value);
+		void setVec2(const std::string& name, float x, float y);
+		void setVec3(const std::string& name, float x, float y, float z);
+		void setVec4(const std::string& name, float x, float y, float z, float w);
+		void setMat4(const std::string& name, const float* mat);
+	};
+
+}

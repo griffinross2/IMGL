@@ -6,4 +6,6 @@ target_sources(${PROJECT_NAME} PRIVATE
     Application.cpp
     Render.cpp
     Container.cpp
+    Shader.cpp
+    Primitives.cpp
 )

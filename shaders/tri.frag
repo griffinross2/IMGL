@@ -1,10 +1,10 @@
 #version 450 core
 
-uniform vec4 color;
+in vec4 vecColor;
 out vec4 FragColor;
 
 void main()
 {
 	// Apply a simple color with alpha
-    FragColor = color;
+    FragColor = vecColor;
 }
