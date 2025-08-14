@@ -18,5 +18,5 @@ target_sources(${PROJECT_NAME} PRIVATE
 
 # Add library
 target_include_directories(${PROJECT_NAME} PRIVATE "../../src")
-# add_subdirectory("../.." "${CMAKE_CURRENT_BINARY_DIR}/OpenGLGui_build")
-target_link_libraries(${PROJECT_NAME} PRIVATE OpenGLGui)
+# add_subdirectory("../.." "${CMAKE_CURRENT_BINARY_DIR}/IMGL_build")
+target_link_libraries(${PROJECT_NAME} PRIVATE IMGL)

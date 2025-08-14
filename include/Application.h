@@ -5,7 +5,7 @@
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 
-namespace OpenGLGui {
+namespace IMGL {
 
 class Application {
 public:
