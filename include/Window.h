@@ -7,10 +7,12 @@ namespace OpenGLGui {
 
 class Window {
 public:
-    Window();
+    Window(Window* parent = nullptr);
     ~Window();
 
     void setWindowTitle(const char* title);
+    void hide();
+	void show();
     GLFWwindow* getGLFWwindow() const { return window; }
     GladGLContext* getGladContext() const { return gladContext; }
 

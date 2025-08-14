@@ -5,7 +5,7 @@
 int main() {
     OpenGLGui::Application app;
     OpenGLGui::MainWindow window;
-    OpenGLGui::Window dialog;
+    OpenGLGui::Window dialog(&window);
     window.setWindowTitle("Basic Window Example");
     dialog.setWindowTitle("Dialog");
 

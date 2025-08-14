@@ -1,6 +1,7 @@
 #include "Application.h"
 
 #include <iostream>
+#include <string>
 
 static OpenGLGui::Application* s_instance = nullptr;
 
@@ -23,13 +24,21 @@ int OpenGLGui::Application::run() {
     // Check if main window is open
     while (!glfwWindowShouldClose(mainWindow->getGLFWwindow())) {
         for (Window* window : windows) {
+			// Hide the window if it should be closed
+            if (glfwWindowShouldClose(window->getGLFWwindow())) {
+                window->hide();
+                continue;
+			}
+
+			// Update the remaining windows
             glfwMakeContextCurrent(window->getGLFWwindow());
 
             window->getGladContext()->Clear(GL_COLOR_BUFFER_BIT);
 
             glfwSwapBuffers(window->getGLFWwindow());
-            glfwPollEvents();
+            
         }
+        glfwPollEvents();
         frameCount++;
 
         if (glfwGetTime() - lastTime >= 1.0) {

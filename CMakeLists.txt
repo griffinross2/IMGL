@@ -148,3 +148,9 @@ add_custom_command(
             "${CMAKE_CURRENT_BINARY_DIR}/fonts"
     COMMENT "Copying in fonts"
 )
+
+# Build examples
+option(BUILD_EXAMPLES "Build example programs" ON)
+if(BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif()
