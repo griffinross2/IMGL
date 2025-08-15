@@ -9,11 +9,13 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-unsigned int IMGL::Renderer::VAO = 0, IMGL::Renderer::VBO = 0, IMGL::Renderer::EBO = 0;
-IMGL::RenderList IMGL::Renderer::renderList;
-IMGL::Renderer* instance = nullptr;
+namespace IMGL {
 
-IMGL::Renderer::Renderer() {
+unsigned int Renderer::VAO = 0, Renderer::VBO = 0, Renderer::EBO = 0;
+RenderList Renderer::renderList;
+Renderer* instance = nullptr;
+
+Renderer::Renderer() {
     instance = this;
 
     glEnable(GL_SCISSOR_TEST);
@@ -46,17 +48,17 @@ IMGL::Renderer::Renderer() {
     glBindVertexArray(0);
 }
 
-void IMGL::Renderer::Destroy() {
+void Renderer::Destroy() {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
 }
 
-IMGL::Renderer* IMGL::Renderer::get() {
+Renderer* Renderer::get() {
     return instance;
 }
 
-void IMGL::Renderer::Render() {
+void Renderer::Render() {
     glBindVertexArray(VAO);
     
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -66,12 +68,12 @@ void IMGL::Renderer::Render() {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, renderList.indices.size() * sizeof(unsigned int), renderList.indices.data(), GL_DYNAMIC_DRAW);
 
     // Reset scissor to the full window size
-    glScissor(0, 0, IMGL::Application::width(), IMGL::Application::height());
+    glScissor(0, 0, Application::width(), Application::height());
 
     // Enable the shader
-    Shader* shader = IMGL::ShaderManager::getShader("triangle");
+    Shader* shader = ShaderManager::getShader("triangle");
     shader->use();
-    glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(IMGL::Application::width()), 0.0f, static_cast<float>(IMGL::Application::height()));
+    glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(Application::width()), 0.0f, static_cast<float>(Application::height()));
     shader->setMat4("projection", glm::value_ptr(projection));
 
     for (const RenderCommand& cmd : renderList.commands) {
@@ -87,7 +89,7 @@ void IMGL::Renderer::Render() {
             glBindBuffer(GL_ARRAY_BUFFER, VBO);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
             shader->use();
-            glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(IMGL::Application::width()), 0.0f, static_cast<float>(IMGL::Application::height()));
+            glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(Application::width()), 0.0f, static_cast<float>(Application::height()));
             shader->setMat4("projection", glm::value_ptr(projection));
         } else if (std::holds_alternative<ScissorCommand>(cmd)) {
             const ScissorCommand& scissorCmd = std::get<ScissorCommand>(cmd);
@@ -102,4 +104,6 @@ void IMGL::Renderer::Render() {
     renderList.commands.clear();
     renderList.vertices.clear();
     renderList.indices.clear();
+}
+
 }

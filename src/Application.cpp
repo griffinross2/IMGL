@@ -1,13 +1,16 @@
 #include "Application.h"
 
 #include "Text.h"
+#include "Input.h"
 
 #include <iostream>
 #include <string>
 
-static IMGL::Application* s_instance = nullptr;
+namespace IMGL {
 
-IMGL::Application::Application() {
+static Application* s_instance = nullptr;
+
+Application::Application() {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
@@ -16,6 +19,7 @@ IMGL::Application::Application() {
     glfwMakeContextCurrent(glfwWindow);
     gladLoadGL(glfwGetProcAddress);
     glfwSwapInterval(1);
+    glfwSetInputMode(glfwWindow, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE);
 
     // Load Shaders
     ShaderManager::get()->addShader("triangle", "shaders/tri.vert", "shaders/tri.frag");
@@ -27,29 +31,29 @@ IMGL::Application::Application() {
     s_instance = this;
 }
 
-IMGL::Application::~Application() {
+Application::~Application() {
     Renderer::Destroy();
 	FreeTypeDone();
     glfwTerminate();
 }
 
-void IMGL::Application::setWindowTitle(const char* title) {
+void Application::setWindowTitle(const char* title) {
     if (s_instance->glfwWindow) {
         glfwSetWindowTitle(s_instance->glfwWindow, title);
     }
 }
 
-void IMGL::Application::setWindowSize(unsigned int width, unsigned int height) {
+void Application::setWindowSize(unsigned int width, unsigned int height) {
     if (s_instance->glfwWindow) {
         glfwSetWindowSize(s_instance->glfwWindow, static_cast<int>(width), static_cast<int>(height));
     }
 }
 
-bool IMGL::Application::shouldClose() {
+bool Application::shouldClose() {
     return glfwWindowShouldClose(s_instance->glfwWindow);
 }
 
-void IMGL::Application::draw() {
+void Application::draw() {
     // Update window
     glfwMakeContextCurrent(s_instance->glfwWindow);
     glfwPollEvents();
@@ -64,24 +68,29 @@ void IMGL::Application::draw() {
     glClear(GL_COLOR_BUFFER_BIT);
 
     // Render the GUI
-    IMGL::Renderer::Render();
+    Renderer::Render();
+
+    // Handle input
+    ProcessInput(s_instance->glfwWindow);
 
     glfwSwapBuffers(s_instance->glfwWindow);
     
 }
 
-unsigned int IMGL::Application::height() {
+unsigned int Application::height() {
     int height;
     glfwGetFramebufferSize(s_instance->glfwWindow, nullptr, &height);
     return static_cast<unsigned int>(height);
 }
 
-unsigned int IMGL::Application::width() {
+unsigned int Application::width() {
     int width;
     glfwGetFramebufferSize(s_instance->glfwWindow, &width, nullptr);
     return static_cast<unsigned int>(width);
 }
 
-IMGL::Application* IMGL::Application::getInstance() {
+Application* Application::getInstance() {
     return s_instance;
+}
+
 }

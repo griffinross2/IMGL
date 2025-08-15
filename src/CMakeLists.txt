@@ -9,4 +9,6 @@ target_sources(${PROJECT_NAME} PRIVATE
     Shader.cpp
     Primitives.cpp
     Text.cpp
+    Input.cpp
+    Clickable.cpp
 )

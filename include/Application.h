@@ -26,6 +26,8 @@ public:
     static Application* getInstance();
 
 private:
+    void handleInput();
+
     ShaderManager shaderManager;
     GLFWwindow* glfwWindow = nullptr;
     std::unique_ptr<Renderer> renderer;

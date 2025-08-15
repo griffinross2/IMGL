@@ -7,9 +7,11 @@
 #include <fstream>
 #include <sstream>
 
-static IMGL::ShaderManager* s_shaderManager = nullptr;
+namespace IMGL {
 
-IMGL::Shader::Shader(const char* vertexPath, const char* fragmentPath) {
+static ShaderManager* s_shaderManager = nullptr;
+
+Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     // 1. Retrieve the vertex/fragment source code from filePath
     std::string vertexCode;
     std::string fragmentCode;
@@ -88,7 +90,7 @@ IMGL::Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     glDeleteShader(fragment);
 }
 
-IMGL::Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath) {
+Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath) {
     // 1. Retrieve the vertex/fragment source code from filePath
     std::string vertexCode;
     std::string fragmentCode;
@@ -189,69 +191,71 @@ IMGL::Shader::Shader(const char* vertexPath, const char* fragmentPath, const cha
     glDeleteShader(fragment);
 }
 
-IMGL::Shader::~Shader() {
+Shader::~Shader() {
     // Delete the shader program
     if (glfwGetCurrentContext()) {
         glDeleteProgram(id);
     }
 }
 
-void IMGL::Shader::use() {
+void Shader::use() {
     glUseProgram(id);
 }
 
-void IMGL::Shader::setBool(const std::string& name, bool value) {
+void Shader::setBool(const std::string& name, bool value) {
     glUniform1i(glGetUniformLocation(id, name.c_str()), (int)value);
 }
 
-void IMGL::Shader::setInt(const std::string& name, int value) {
+void Shader::setInt(const std::string& name, int value) {
     glUniform1i(glGetUniformLocation(id, name.c_str()), value);
 }
 
-void IMGL::Shader::setFloat(const std::string& name, float value) {
+void Shader::setFloat(const std::string& name, float value) {
     glUniform1f(glGetUniformLocation(id, name.c_str()), value);
 }
 
-void IMGL::Shader::setVec2(const std::string& name, float x, float y) {
+void Shader::setVec2(const std::string& name, float x, float y) {
     glUniform2f(glGetUniformLocation(id, name.c_str()), x, y);
 }
 
-void IMGL::Shader::setVec3(const std::string& name, float x, float y, float z) {
+void Shader::setVec3(const std::string& name, float x, float y, float z) {
     glUniform3f(glGetUniformLocation(id, name.c_str()), x, y, z);
 }
 
-void IMGL::Shader::setVec4(const std::string& name, float x, float y, float z, float w) {
+void Shader::setVec4(const std::string& name, float x, float y, float z, float w) {
     glUniform4f(glGetUniformLocation(id, name.c_str()), x, y, z, w);
 }
 
-void IMGL::Shader::setMat4(const std::string& name, const float* mat) {
+void Shader::setMat4(const std::string& name, const float* mat) {
     glUniformMatrix4fv(glGetUniformLocation(id, name.c_str()), 1, GL_FALSE, mat);
 }
 
-IMGL::ShaderManager::ShaderManager() {
+ShaderManager::ShaderManager() {
     s_shaderManager = this;
 }
 
-IMGL::ShaderManager::~ShaderManager() {
+ShaderManager::~ShaderManager() {
     s_shaderManager = nullptr;
 }
 
-IMGL::ShaderManager* IMGL::ShaderManager::get() {
+ShaderManager* ShaderManager::get() {
     return s_shaderManager;
 }
 
-void IMGL::ShaderManager::addShader(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath) {
+void ShaderManager::addShader(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath) {
     s_shaderManager->shaders.emplace(std::piecewise_construct, std::forward_as_tuple(name), std::forward_as_tuple(vertexPath.c_str(), fragmentPath.c_str()));
 }
 
-void IMGL::ShaderManager::addShader(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath, const std::string& geometryPath) {
+void ShaderManager::addShader(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath, const std::string& geometryPath) {
     s_shaderManager->shaders.emplace(std::piecewise_construct, std::forward_as_tuple(name), std::forward_as_tuple(vertexPath.c_str(), fragmentPath.c_str(), geometryPath.c_str()));
 }
 
-IMGL::Shader* IMGL::ShaderManager::getShader(const std::string& name) {
+Shader* ShaderManager::getShader(const std::string& name) {
     auto it = s_shaderManager->shaders.find(name);
     if (it != s_shaderManager->shaders.end()) {
         return &it->second;
     }
     return nullptr;
+}
+
 }
