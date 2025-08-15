@@ -1,0 +1,55 @@
+#pragma once
+
+#include "Shader.h"
+
+#include "Style.h"
+
+#include <string>
+#include <memory>
+#include <map>
+
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
+#include <glm/glm.hpp>
+
+namespace IMGL {
+
+typedef struct {
+    unsigned int textureId; // ID handle of the glyph texture
+    glm::ivec2 size;         // Size of glyph
+    glm::ivec2 bearing;      // Offset from baseline to left/top of glyph
+    unsigned int advance;    // Horizontal offset to advance to next glyph
+} Character;
+
+void FreeTypeInit();
+void FreeTypeDone();
+
+class Text {
+public:
+    Text(const std::string& text, const std::string& fontPath, unsigned int fontSize, Color fontColor, int x, int y);
+    ~Text();
+
+	void draw();
+
+    unsigned int getLineLength(const std::string& text);
+
+private:
+    FT_Face m_face;
+    std::unique_ptr<Shader> m_shader;
+    std::map<char, Character> m_characters;
+	std::string m_text;
+	int m_x;
+	int m_y;
+	Color m_fontColor;
+    unsigned int m_VAO;
+    unsigned int m_VBO;
+};
+
+unsigned GetTextLength(const std::string& text);
+void TextSize(unsigned int size);
+void TextColor(const Color& color);
+void DrawText(const std::string& text, int x, int y);
+void DrawTextCallback(void* textObj);
+
+}

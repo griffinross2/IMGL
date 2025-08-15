@@ -17,6 +17,10 @@ IMGL::Renderer::Renderer() {
     instance = this;
 
     glEnable(GL_SCISSOR_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_MULTISAMPLE);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     // Triangle shader
     shader = Shader("shaders/tri.vert", "shaders/tri.frag");
@@ -78,7 +82,12 @@ void IMGL::Renderer::Render() {
             glDrawElements(GL_TRIANGLES, drawCmd.idxCount, GL_UNSIGNED_INT, (void*)(drawCmd.idxOff * sizeof(unsigned int)));
         } else if (std::holds_alternative<CustomCallback>(cmd)) {
             const CustomCallback& customCmd = std::get<CustomCallback>(cmd);
-            customCmd.callback();
+            customCmd.callback(customCmd.data);
+
+            // Assume the callback changed OpenGL state
+            glBindVertexArray(VAO);
+            glBindBuffer(GL_ARRAY_BUFFER, VBO);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
         } else if (std::holds_alternative<ScissorCommand>(cmd)) {
             const ScissorCommand& scissorCmd = std::get<ScissorCommand>(cmd);
             glScissor(scissorCmd.x, scissorCmd.y, scissorCmd.width, scissorCmd.height);

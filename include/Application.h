@@ -3,6 +3,7 @@
 #include "Render.h"
 
 #include <vector>
+#include <memory>
 
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>

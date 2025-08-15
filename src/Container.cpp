@@ -8,7 +8,9 @@
 #include <glm/glm.hpp>
 
 
-static IMGL::Color s_container_color = { 0.2f, 0.2f, 0.2f, 1.0f };
+static IMGL::Color s_container_color = IMGL::DefaultContainerColor;
+static IMGL::Color s_container_border_color = IMGL::DefaultContainerBorderColor;
+unsigned int s_container_border_thickness = IMGL::DefaultContainerBorderThickness;
 
 void IMGL::ToScreenSpace(int& x, int& y) {
     // Convert the coordinates from their position within the container to screen pixels
@@ -21,6 +23,14 @@ void IMGL::ToScreenSpace(int& x, int& y) {
 
 void IMGL::ContainerBackground(const Color& color) {
     s_container_color = color;
+}
+
+void IMGL::ContainerBorderColor(const Color& color) {
+    s_container_border_color = color;
+}
+
+void IMGL::ContainerBorderThickness(unsigned int thickness) {
+    s_container_border_thickness = thickness;
 }
 
 void IMGL::ContainerBegin(int x, int y, int width, int height) {
@@ -39,6 +49,11 @@ void IMGL::ContainerBegin(int x, int y, int width, int height) {
 
     // Draw the container background
     IMGL::DrawRectangle(x, y, width, height, s_container_color);
+
+	// Draw the container border
+    if (s_container_border_thickness > 0) {
+        IMGL::DrawBorder(x, y, width, height, s_container_border_color, s_container_border_thickness);
+    }
 
     // Push the container onto the stack
     ToScreenSpace(x, y);
@@ -62,4 +77,6 @@ void IMGL::ContainerEnd() {
 
     // Restore default attributes
     s_container_color = IMGL::DefaultContainerColor;
+	s_container_border_color = IMGL::DefaultContainerBorderColor;
+	s_container_border_thickness = IMGL::DefaultContainerBorderThickness;
 }

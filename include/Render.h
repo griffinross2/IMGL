@@ -18,7 +18,8 @@ namespace IMGL {
 
     // A custom callback
     struct CustomCallback {
-        void (*callback)();
+        void (*callback)(void*);
+        void* data;
     };
 
     // A scissor call

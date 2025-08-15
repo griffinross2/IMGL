@@ -65,4 +65,15 @@ namespace IMGL {
         renderList.commands.push_back(drawCmd);
     }
 
+    void DrawBorder(int x, int y, int width, int height, const Color& color, unsigned int thickness) {
+        // Draw bottom border
+		DrawRectangle(x, y, width, thickness, color);
+		// Draw top border
+		DrawRectangle(x, y + height - thickness, width, thickness, color);
+		// Draw left border
+		DrawRectangle(x, y, thickness, height, color);
+		// Draw right border
+		DrawRectangle(x + width - thickness, y, thickness, height, color);
+	}
+
 }

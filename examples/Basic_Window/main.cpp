@@ -2,6 +2,7 @@
 
 #include "Container.h"
 #include "Primitives.h"
+#include "Text.h"
 
 int main() {
     IMGL::Application app;
@@ -18,9 +19,10 @@ int main() {
         IMGL::ContainerBegin(100, 100, 600, 300);
 
         IMGL::ContainerBackground({ 0.5f, 0.2f, 0.2f, 1.0f });
-        IMGL::ContainerBegin(400, 100, 400, 100);
+        IMGL::ContainerBegin(100, 100, 400, 100);
 
-        IMGL::DrawRectangle(-10, 10, 50, 50, { 0.2f, 0.5f, 0.2f, 1.0f });
+        IMGL::DrawRectangle(10, 10, 50, 50, { 0.2f, 0.5f, 0.2f, 1.0f });
+		IMGL::DrawText("Hello, IMGL!", 70, 20);
 
         IMGL::ContainerEnd();
         

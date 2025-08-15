@@ -21,6 +21,8 @@ namespace IMGL {
 
     void ToScreenSpace(int& x, int& y);
     void ContainerBackground(const Color& color);
+	void ContainerBorderColor(const Color& color);
+	void ContainerBorderThickness(unsigned int thickness);
     void ContainerBegin(int x, int y, int width, int height);
     void ContainerEnd();
 

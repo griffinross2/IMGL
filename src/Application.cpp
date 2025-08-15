@@ -1,5 +1,7 @@
 #include "Application.h"
 
+#include "Text.h"
+
 #include <iostream>
 #include <string>
 
@@ -13,7 +15,9 @@ IMGL::Application::Application() {
     glfwWindow = glfwCreateWindow(800, 600, "Untitled Window", NULL, NULL);
     glfwMakeContextCurrent(glfwWindow);
     gladLoadGL(glfwGetProcAddress);
+    glfwSwapInterval(1);
 
+    FreeTypeInit();
     renderer = std::make_unique<Renderer>();
 
     s_instance = this;
@@ -21,6 +25,7 @@ IMGL::Application::Application() {
 
 IMGL::Application::~Application() {
     Renderer::Destroy();
+	FreeTypeDone();
     glfwTerminate();
 }
 

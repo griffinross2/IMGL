@@ -8,4 +8,5 @@ target_sources(${PROJECT_NAME} PRIVATE
     Container.cpp
     Shader.cpp
     Primitives.cpp
+    Text.cpp
 )
