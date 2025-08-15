@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Render.h"
+#include "Shader.h"
 
 #include <vector>
 #include <memory>
@@ -25,6 +26,7 @@ public:
     static Application* getInstance();
 
 private:
+    ShaderManager shaderManager;
     GLFWwindow* glfwWindow = nullptr;
     std::unique_ptr<Renderer> renderer;
 };

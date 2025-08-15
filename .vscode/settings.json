@@ -64,6 +64,13 @@
         "ios": "cpp",
         "locale": "cpp",
         "print": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "list": "cpp",
+        "unordered_set": "cpp",
+        "valarray": "cpp",
+        "__hash_table": "cpp",
+        "__tree": "cpp",
+        "map": "cpp",
+        "set": "cpp"
     }
 }

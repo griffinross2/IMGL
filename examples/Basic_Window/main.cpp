@@ -22,7 +22,8 @@ int main() {
         IMGL::ContainerBegin(100, 100, 400, 100);
 
         IMGL::DrawRectangle(10, 10, 50, 50, { 0.2f, 0.5f, 0.2f, 1.0f });
-		IMGL::DrawText("Hello, IMGL!", 70, 20);
+		IMGL::TextColor({ 1.0f, 0.0f, 1.0f, 1.0f });
+        IMGL::DrawText("Hello, IMGL!", 70, 20);
 
         IMGL::ContainerEnd();
         

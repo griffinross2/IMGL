@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "Style.h"
 #include "Container.h"
+#include "Shader.h"
 
 #include <stdexcept>
 
@@ -96,9 +97,6 @@ namespace IMGL {
             };
             m_characters.insert(std::pair<char, Character>(c, character));
         }
-
-        // Create shader object
-        m_shader = std::make_unique<Shader>("shaders/text.vert", "shaders/text.frag");
     }
 
     Text::~Text() {
@@ -116,9 +114,10 @@ namespace IMGL {
     void Text::draw() {
         // Bind things
         glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(IMGL::Application::width()), 0.0f, static_cast<float>(IMGL::Application::height()));
-        m_shader->use();
-        m_shader->setVec3("textColor", m_fontColor.r, m_fontColor.g, m_fontColor.b);
-        m_shader->setMat4("projection", glm::value_ptr(projection));
+        Shader* shader = IMGL::ShaderManager::getShader("text");
+        shader->use();
+        shader->setVec3("textColor", m_fontColor.r, m_fontColor.g, m_fontColor.b);
+        shader->setMat4("projection", glm::value_ptr(projection));
 
         glActiveTexture(GL_TEXTURE0);
         glBindVertexArray(m_VAO);

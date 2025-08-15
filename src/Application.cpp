@@ -17,6 +17,10 @@ IMGL::Application::Application() {
     gladLoadGL(glfwGetProcAddress);
     glfwSwapInterval(1);
 
+    // Load Shaders
+    ShaderManager::get()->addShader("triangle", "shaders/tri.vert", "shaders/tri.frag");
+    ShaderManager::get()->addShader("text", "shaders/text.vert", "shaders/text.frag");
+
     FreeTypeInit();
     renderer = std::make_unique<Renderer>();
 

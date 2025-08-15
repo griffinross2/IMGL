@@ -1,10 +1,13 @@
 #include "Shader.h"
 
 #include <glad/gl.h>
+#include <GLFW/glfw3.h>
 
 #include <iostream>
 #include <fstream>
 #include <sstream>
+
+static IMGL::ShaderManager* s_shaderManager = nullptr;
 
 IMGL::Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     // 1. Retrieve the vertex/fragment source code from filePath
@@ -186,6 +189,13 @@ IMGL::Shader::Shader(const char* vertexPath, const char* fragmentPath, const cha
     glDeleteShader(fragment);
 }
 
+IMGL::Shader::~Shader() {
+    // Delete the shader program
+    if (glfwGetCurrentContext()) {
+        glDeleteProgram(id);
+    }
+}
+
 void IMGL::Shader::use() {
     glUseProgram(id);
 }
@@ -216,4 +226,32 @@ void IMGL::Shader::setVec4(const std::string& name, float x, float y, float z, f
 
 void IMGL::Shader::setMat4(const std::string& name, const float* mat) {
     glUniformMatrix4fv(glGetUniformLocation(id, name.c_str()), 1, GL_FALSE, mat);
+}
+
+IMGL::ShaderManager::ShaderManager() {
+    s_shaderManager = this;
+}
+
+IMGL::ShaderManager::~ShaderManager() {
+    s_shaderManager = nullptr;
+}
+
+IMGL::ShaderManager* IMGL::ShaderManager::get() {
+    return s_shaderManager;
+}
+
+void IMGL::ShaderManager::addShader(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath) {
+    s_shaderManager->shaders.emplace(std::piecewise_construct, std::forward_as_tuple(name), std::forward_as_tuple(vertexPath.c_str(), fragmentPath.c_str()));
+}
+
+void IMGL::ShaderManager::addShader(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath, const std::string& geometryPath) {
+    s_shaderManager->shaders.emplace(std::piecewise_construct, std::forward_as_tuple(name), std::forward_as_tuple(vertexPath.c_str(), fragmentPath.c_str(), geometryPath.c_str()));
+}
+
+IMGL::Shader* IMGL::ShaderManager::getShader(const std::string& name) {
+    auto it = s_shaderManager->shaders.find(name);
+    if (it != s_shaderManager->shaders.end()) {
+        return &it->second;
+    }
+    return nullptr;
 }

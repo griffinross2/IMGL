@@ -1,6 +1,8 @@
 #pragma once
 
 #include <string>
+#include <iostream>
+#include <map>
 
 namespace IMGL {
 
@@ -15,8 +17,10 @@ namespace IMGL {
 		unsigned int id;
 		// Constructor reads and builds the shader
 		Shader() = default;
+		~Shader();
 		Shader(const char* vertexPath, const char* fragmentPath);
 		Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath);
+		
 		// Use/activate the shader
 		void use();
 		// Utility uniform functions
@@ -27,6 +31,19 @@ namespace IMGL {
 		void setVec3(const std::string& name, float x, float y, float z);
 		void setVec4(const std::string& name, float x, float y, float z, float w);
 		void setMat4(const std::string& name, const float* mat);
+	};
+
+	class ShaderManager {
+	public:
+		ShaderManager();
+		~ShaderManager();
+
+		static ShaderManager* get();
+		static void addShader(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath);
+		static void addShader(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath, const std::string& geometryPath);
+		static Shader* getShader(const std::string& name);
+
+		std::map<std::string, Shader> shaders;
 	};
 
 }

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Shader.h"
-
 #include "Style.h"
 
 #include <string>
@@ -36,7 +34,6 @@ public:
 
 private:
     FT_Face m_face;
-    std::unique_ptr<Shader> m_shader;
     std::map<char, Character> m_characters;
 	std::string m_text;
 	int m_x;

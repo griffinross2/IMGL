@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Shader.h"
-
 #include <vector>
 #include <variant>
 
@@ -52,7 +50,6 @@ namespace IMGL {
         static void Destroy();
 
         static unsigned int VAO, VBO, EBO;
-        static Shader shader;
         static RenderList renderList;
 
     };
