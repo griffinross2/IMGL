@@ -85,6 +85,9 @@ void IMGL::Renderer::Render() {
             customCmd.callback(customCmd.data);
 
             // Assume the callback changed OpenGL state
+            shader.use();
+            glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(IMGL::Application::width()), 0.0f, static_cast<float>(IMGL::Application::height()));
+            shader.setMat4("projection", glm::value_ptr(projection));
             glBindVertexArray(VAO);
             glBindBuffer(GL_ARRAY_BUFFER, VBO);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
