@@ -14,6 +14,23 @@
 
 namespace IMGL {
 
+    // Define a structure to cache fonts
+    typedef struct FontDescriptor {
+		std::string fontPath;
+		unsigned int fontSize;
+
+        bool const operator==(const FontDescriptor& o) {
+			return fontPath == o.fontPath && fontSize == o.fontSize;
+        }
+
+        bool const operator<(const FontDescriptor& o) const {
+            return fontPath.compare(o.fontPath) < 0 || fontSize < o.fontSize;
+        }
+    } FontDescriptor;
+
+    // Font cache map
+    static std::map<FontDescriptor, std::shared_ptr<Font>> s_fontCache;
+
     static FT_Library s_ft = nullptr;
 
     static unsigned int s_fontSize = DefaultTextSize;
@@ -34,8 +51,7 @@ namespace IMGL {
         }
     }
 
-    Text::Text(const std::string& text, const std::string& fontPath, unsigned int fontSize, Color fontColor, int x, int y) :
-        m_text(text), m_fontColor(fontColor), m_x(x), m_y(y) {
+    Font::Font(const std::string& fontPath, unsigned int fontSize) {
         // Configure VAO/VBO for texture quads
         glGenVertexArrays(1, &m_VAO);
         glGenBuffers(1, &m_VBO);
@@ -99,7 +115,7 @@ namespace IMGL {
         }
     }
 
-    Text::~Text() {
+    Font::~Font() {
         // Delete character textures
         for (auto& pair : m_characters) {
             glDeleteTextures(1, &pair.second.textureId);
@@ -111,26 +127,26 @@ namespace IMGL {
 		FT_Done_Face(m_face);
     }
 
-    void Text::draw() {
+    void Font::draw(const std::string& text, Color color, int x, int y) {
         // Bind things
         glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(IMGL::Application::width()), 0.0f, static_cast<float>(IMGL::Application::height()));
         Shader* shader = IMGL::ShaderManager::getShader("text");
         shader->use();
-        shader->setVec3("textColor", m_fontColor.r, m_fontColor.g, m_fontColor.b);
+        shader->setVec3("textColor", color.r, color.g, color.b);
         shader->setMat4("projection", glm::value_ptr(projection));
 
         glActiveTexture(GL_TEXTURE0);
         glBindVertexArray(m_VAO);
 
-        float x = static_cast<float>(m_x);
-        float y = static_cast<float>(m_y);
+        float d_x = static_cast<float>(x);
+        float d_y = static_cast<float>(y);
 
         // Draw each character
-        for (char c : m_text) {
+        for (char c : text) {
             // Quad dimensions
             Character ch = m_characters.at(c);
-            float xpos = x + ch.bearing.x;
-            float ypos = y - (ch.size.y - ch.bearing.y);
+            float xpos = d_x + ch.bearing.x;
+            float ypos = d_y - (ch.size.y - ch.bearing.y);
             float w = ch.size.x;
             float h = ch.size.y;
 
@@ -157,7 +173,7 @@ namespace IMGL {
             glDrawArrays(GL_TRIANGLES, 0, 6);
 
             // Advance
-            x += (ch.advance >> 6);
+            d_x += (ch.advance >> 6);
         }
 
         // Unbind
@@ -165,7 +181,7 @@ namespace IMGL {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    unsigned int Text::getLineLength(const std::string& text) {
+    unsigned int Font::getLineLength(const std::string& text) {
         unsigned int length = 0;
         for (char c : text) {
             length += m_characters.at(c).advance >> 6;
@@ -173,10 +189,29 @@ namespace IMGL {
         return length;
     }
 
+    Text::Text(const std::string& text, const std::string& fontPath, unsigned int fontSize, Color fontColor, int x, int y)
+        : m_text(text), m_fontPath(fontPath), m_fontSize(fontSize), m_fontColor(fontColor), m_x(x), m_y(y) {
+        // Ensure the font is cached
+        if (s_fontCache.find({ fontPath, fontSize }) == s_fontCache.end()) {
+            s_fontCache[{ fontPath, fontSize }] = std::make_shared<Font>(fontPath, fontSize);
+        }
+	}
+
+    Text::~Text() {
+	}
+
+    void Text::draw() {
+		std::shared_ptr<Font> fontPtr = s_fontCache[{m_fontPath, m_fontSize}];
+		fontPtr->draw(m_text, m_fontColor, m_x, m_y);
+    }
+
     unsigned int GetTextLength(const std::string& text) {
-        // Create a temporary Text object to measure the length
-        Text tempText(text, "fonts/Roboto/static/Roboto-Regular.ttf", s_fontSize, s_fontColor, 0, 0);
-        return tempText.getLineLength(text);
+        // Ensure the font exists
+        if (s_fontCache.find({ "fonts/Roboto/static/Roboto-Regular.ttf", s_fontSize }) == s_fontCache.end()) {
+            s_fontCache[{ "fonts/Roboto/static/Roboto-Regular.ttf", s_fontSize }] = std::make_shared<Font>("fonts/Roboto/static/Roboto-Regular.ttf", s_fontSize);
+		}
+
+		return s_fontCache[{ "fonts/Roboto/static/Roboto-Regular.ttf", s_fontSize }]->getLineLength(text);
 	}
 
     void TextSize(unsigned int size) {

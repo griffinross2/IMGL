@@ -23,24 +23,35 @@ typedef struct {
 void FreeTypeInit();
 void FreeTypeDone();
 
-class Text {
+class Font {
 public:
-    Text(const std::string& text, const std::string& fontPath, unsigned int fontSize, Color fontColor, int x, int y);
-    ~Text();
+    Font(const std::string& fontPath, unsigned int fontSize);
+    ~Font();
 
-	void draw();
-
+    void draw(const std::string& text, Color color, int x, int y);
     unsigned int getLineLength(const std::string& text);
 
 private:
     FT_Face m_face;
     std::map<char, Character> m_characters;
-	std::string m_text;
-	int m_x;
-	int m_y;
-	Color m_fontColor;
     unsigned int m_VAO;
     unsigned int m_VBO;
+};
+
+class Text {
+public:
+    Text(const std::string& text, const std::string& fontPath, unsigned int fontSize, Color fontColor, int x, int y);
+    ~Text();
+
+    void draw();
+
+private:
+    std::string m_text;
+    int m_x;
+    int m_y;
+	std::string m_fontPath;
+	unsigned int m_fontSize;
+    Color m_fontColor;
 };
 
 unsigned GetTextLength(const std::string& text);
