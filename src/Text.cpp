@@ -232,10 +232,6 @@ namespace IMGL {
             .data = static_cast<void*>(textObj),
         };
         IMGL::Renderer::get()->renderList.commands.push_back(callback);
-
-        // Restore state
-        s_fontColor = DefaultTextColor;
-        s_fontSize = DefaultTextSize;
     }
 
     void DrawTextCallback(void* textObj) {

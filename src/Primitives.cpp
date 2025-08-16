@@ -65,6 +65,13 @@ namespace IMGL {
         renderList.commands.push_back(drawCmd);
     }
 
+    bool CheckRectangleBounds(int x, int y, int width, int height, int pointX, int pointY) {
+        // Convert rectangle coordinates to screen space
+        ToScreenSpace(x, y);
+        return (pointX >= x) && (pointX <= x + width) &&
+               (pointY >= y) && (pointY <= y + height);
+	}
+
     void DrawBorder(int x, int y, int width, int height, const Color& color, unsigned int thickness) {
         // Draw bottom border
 		DrawRectangle(x, y, width, thickness, color);

@@ -75,11 +75,6 @@ void ContainerEnd() {
         // If no containers are left, expand the scissor to the full window size
         Renderer::get()->renderList.commands.push_back(ScissorCommand{0, 0, Application::width(), Application::height()});
     }
-
-    // Restore default attributes
-    s_container_color = DefaultContainerColor;
-	s_container_border_color = DefaultContainerBorderColor;
-	s_container_border_thickness = DefaultContainerBorderThickness;
 }
 
 }

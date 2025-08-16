@@ -10,5 +10,5 @@ target_sources(${PROJECT_NAME} PRIVATE
     Primitives.cpp
     Text.cpp
     Input.cpp
-    Clickable.cpp
+    Interactable.cpp
 )

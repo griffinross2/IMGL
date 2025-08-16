@@ -67,11 +67,11 @@ void Application::draw() {
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
+    // Handle input
+    ProcessInput();
+
     // Render the GUI
     Renderer::Render();
-
-    // Handle input
-    ProcessInput(s_instance->glfwWindow);
 
     glfwSwapBuffers(s_instance->glfwWindow);
     
@@ -91,6 +91,10 @@ unsigned int Application::width() {
 
 Application* Application::getInstance() {
     return s_instance;
+}
+
+GLFWwindow* Application::getWindow() {
+    return s_instance->glfwWindow;
 }
 
 }

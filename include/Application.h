@@ -24,6 +24,7 @@ public:
     static unsigned int width();
 
     static Application* getInstance();
+	static GLFWwindow* getWindow();
 
 private:
     void handleInput();

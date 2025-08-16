@@ -1,8 +1,15 @@
 #include "Application.h"
 
+#include "Interactable.h"
 #include "Container.h"
 #include "Primitives.h"
 #include "Text.h"
+#include "Input.h"
+#include "Style.h"
+
+void testCb(int x, int y) {
+    std::cout << "Clicked at: " << x << ", " << y << std::endl;
+}
 
 int main() {
     IMGL::Application app;
@@ -15,13 +22,20 @@ int main() {
 
     // Check if main window is open
     while (!IMGL::Application::shouldClose()) {
-
+        IMGL::ContainerBackground({ 0.5f, 0.2f, 0.2f, 1.0f });
         IMGL::ContainerBegin(100, 100, 600, 300);
 
-        IMGL::ContainerBackground({ 0.5f, 0.2f, 0.2f, 1.0f });
+        IMGL::ContainerBackground(IMGL::DefaultContainerColor);
         IMGL::ContainerBegin(100, 100, 400, 100);
 
-        IMGL::DrawRectangle(10, 10, 50, 50, { 0.2f, 0.5f, 0.2f, 1.0f });
+		bool hovered, pressed, clicked;
+        IMGL::DrawButton(10, 10, 50, 50, hovered, pressed, clicked);
+        if (clicked) {
+            std::cout << "Button Clicked!" << std::endl;
+        }
+
+		IMGL::TextSize(24);
+
 		IMGL::TextColor({ 1.0f, 0.0f, 1.0f, 1.0f });
         IMGL::DrawText("Hello, IMGL!", 70, 20);
 
