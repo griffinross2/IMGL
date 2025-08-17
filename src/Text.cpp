@@ -181,12 +181,17 @@ namespace IMGL {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    unsigned int Font::getLineLength(const std::string& text) {
-        unsigned int length = 0;
+    void Font::getLineDimensions(const std::string& text, unsigned int& width, unsigned int& height) {
+        unsigned int lineWidth = 0;
+        unsigned int lineHeight = 0;
         for (char c : text) {
-            length += m_characters.at(c).advance >> 6;
+            lineWidth += m_characters.at(c).advance >> 6;
+            if (m_characters.at(c).size.y > lineHeight) {
+                lineHeight = m_characters.at(c).size.y;
+            }
         }
-        return length;
+		width = lineWidth;
+		height = lineHeight;
     }
 
     Text::Text(const std::string& text, const std::string& fontPath, unsigned int fontSize, Color fontColor, int x, int y)
@@ -205,13 +210,13 @@ namespace IMGL {
 		fontPtr->draw(m_text, m_fontColor, m_x, m_y);
     }
 
-    unsigned int GetTextLength(const std::string& text) {
+    void GetTextDimensions(const std::string& text, unsigned int& width, unsigned int& height) {
         // Ensure the font exists
         if (s_fontCache.find({ "fonts/Roboto/static/Roboto-Regular.ttf", s_fontSize }) == s_fontCache.end()) {
             s_fontCache[{ "fonts/Roboto/static/Roboto-Regular.ttf", s_fontSize }] = std::make_shared<Font>("fonts/Roboto/static/Roboto-Regular.ttf", s_fontSize);
 		}
 
-		return s_fontCache[{ "fonts/Roboto/static/Roboto-Regular.ttf", s_fontSize }]->getLineLength(text);
+		return s_fontCache[{ "fonts/Roboto/static/Roboto-Regular.ttf", s_fontSize }]->getLineDimensions(text, width, height);
 	}
 
     void TextSize(unsigned int size) {

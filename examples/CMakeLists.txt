@@ -1,1 +1,1 @@
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Basic_Window")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Basic_Tabs")

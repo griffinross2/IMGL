@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "Input.h"
 #include "Primitives.h"
+#include "Text.h"
 
 namespace IMGL {
 
@@ -29,7 +30,7 @@ namespace IMGL {
 		s_button_border_thickness = thickness;
 	}
 
-	void DrawButton(int x, int y, int width, int height, bool& hovered, bool& pressed, bool& clicked) {
+	void DrawButton(const std::string& text, int x, int y, int width, int height, bool& hovered, bool& pressed, bool& clicked) {
 		int mx, my;
 		GetMousePosition(mx, my);
 		hovered = CheckRectangleBounds(x, y, width, height, mx, my);
@@ -54,6 +55,13 @@ namespace IMGL {
 		if (s_button_border_thickness > 0) {
 			DrawBorder(x, y, width, height, s_button_border_color, s_button_border_thickness);
 		}
+
+		// Get the text length
+		unsigned int textWidth, textHeight;
+		GetTextDimensions(text, textWidth, textHeight);
+		//std::cout << "Text Width: " << textWidth << ", Text Height: " << textHeight << std::endl;
+		int textStart = (width - textWidth) / 2 + x;
+		DrawText(text, textStart, y + (height - textHeight) / 2);
 
 		MouseClick mouseClick = GetMouseClick();
 		clicked = mouseClick.mouseLeftClick && CheckRectangleBounds(x, y, width, height, mx, my);

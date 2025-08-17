@@ -29,7 +29,7 @@ public:
     ~Font();
 
     void draw(const std::string& text, Color color, int x, int y);
-    unsigned int getLineLength(const std::string& text);
+    void getLineDimensions(const std::string& text, unsigned int& width, unsigned int& height);
 
 private:
     FT_Face m_face;
@@ -54,7 +54,7 @@ private:
     Color m_fontColor;
 };
 
-unsigned GetTextLength(const std::string& text);
+void GetTextDimensions(const std::string& text, unsigned int& width, unsigned int& height);
 void TextSize(unsigned int size);
 void TextColor(const Color& color);
 void DrawText(const std::string& text, int x, int y);
