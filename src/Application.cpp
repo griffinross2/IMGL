@@ -28,6 +28,10 @@ Application::Application() {
     FreeTypeInit();
     renderer = std::make_unique<Renderer>();
 
+	// Register global key callback
+	glfwSetKeyCallback(glfwWindow, KeyEventCallback);
+	glfwSetCharCallback(glfwWindow, CharEventCallback);
+
     s_instance = this;
 }
 

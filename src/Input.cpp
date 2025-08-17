@@ -13,9 +13,12 @@ namespace IMGL {
     static std::array<std::pair<int, int>, 3> s_mousePressedAt = { std::pair{-1, -1}, std::pair{-1, -1}, std::pair{-1, -1} };
     static std::array<std::pair<int, int>, 3> s_mouseReleasedAt = { std::pair{-1, -1}, std::pair{-1, -1}, std::pair{-1, -1} };
 
-	static bool mouseLeftClick = false;
-	static bool mouseRightClick = false;
-	static bool mouseMiddleClick = false;
+	static bool s_mouseLeftClick = false;
+	static bool s_mouseRightClick = false;
+	static bool s_mouseMiddleClick = false;
+
+	static std::vector<void(*)(int key, int action, int mod)> s_keyCallbacks;
+	static std::vector<void(*)(unsigned int codepoint)> s_charCallbacks;
 
     void GetMousePosition(int& x, int& y) {
         double xpos, ypos;
@@ -30,9 +33,9 @@ namespace IMGL {
         MouseClick click = {
 			.x = x,
 			.y = y,
-			.mouseLeftClick = mouseLeftClick,
-			.mouseRightClick = mouseRightClick,
-			.mouseMiddleClick = mouseMiddleClick,
+			.mouseLeftClick = s_mouseLeftClick,
+			.mouseRightClick = s_mouseRightClick,
+			.mouseMiddleClick = s_mouseMiddleClick,
         };
 
 		return click;
@@ -44,9 +47,31 @@ namespace IMGL {
 		middle = s_mouseButtonStates[GLFW_MOUSE_BUTTON_MIDDLE];
     }
 
+    void AddKeyEventCallback(void func(int key, int action, int mod)) {
+		s_keyCallbacks.push_back(func);
+    }
+
+    void AddCharEventCallback(void func(unsigned int codepoint)) {
+        s_charCallbacks.push_back(func);
+    }
+
+    void KeyEventCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+        for (const auto& cb : s_keyCallbacks) {
+			cb(key, action, mods);
+		}
+	}
+
+    void CharEventCallback(GLFWwindow* window, unsigned int codepoint) {
+        for (const auto& cb : s_charCallbacks) {
+            cb(codepoint);
+        }
+	}
+
     void ProcessInput() {
         // A click happens on an element when the mouse button is pressed on that element, then 
         // released while still over that element.
+        s_keyCallbacks.clear();
+		s_charCallbacks.clear();
 
 		int height = Application::height();
 		GLFWwindow* window = Application::getWindow();
@@ -82,13 +107,13 @@ namespace IMGL {
 
             // Record clicks
             if (button == GLFW_MOUSE_BUTTON_LEFT) {
-                mouseLeftClick = clicked;
+                s_mouseLeftClick = clicked;
             }
             if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-                mouseRightClick = clicked;
+                s_mouseRightClick = clicked;
 			}
             if (button == GLFW_MOUSE_BUTTON_MIDDLE) {
-                mouseMiddleClick = clicked;
+                s_mouseMiddleClick = clicked;
             }
         }
     }

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.26)
-project(Basic_Tabs)
+project(TextEditBox)
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 23)
@@ -14,6 +14,8 @@ add_executable(${PROJECT_NAME})
 # Add sources
 target_sources(${PROJECT_NAME} PRIVATE
     main.cpp
+    TextEditBox.h
+    TextEditBox.cpp
 )
 
 # Add library

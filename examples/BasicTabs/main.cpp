@@ -10,7 +10,6 @@
 using namespace IMGL;
 
 int currentTab = 0;
-
 void drawTabBar();
 void drawTabZero();
 void drawTabOne();

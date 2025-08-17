@@ -11,5 +11,4 @@ namespace IMGL {
 	void ButtonPressedColor(const Color& color);
 	void ButtonBorder(const Color& color, unsigned int thickness);
 	void DrawButton(const std::string& text, int x, int y, int width, int height, bool& hovered, bool& pressed, bool& clicked);
-
 }

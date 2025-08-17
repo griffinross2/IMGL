@@ -66,5 +66,4 @@ namespace IMGL {
 		MouseClick mouseClick = GetMouseClick();
 		clicked = mouseClick.mouseLeftClick && CheckRectangleBounds(x, y, width, height, mx, my);
 	}
-
 }
