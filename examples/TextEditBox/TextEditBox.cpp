@@ -33,15 +33,23 @@ TextEditBox::~TextEditBox() {
 }
 
 void TextEditBox::draw() {
-    // Check clicked
+    // Get text starting point
+    int tStartOff = 0;
     unsigned int textWidth, textHeight;
+    TextSize(m_textSize);
+    GetTextDimensions(m_text, textWidth, textHeight);
+    if (textWidth > m_width - 10) {
+        tStartOff = (m_width - 10) - textWidth;
+    }
+
+    // Check clicked
     int mx, my;
     unsigned int mousePosInText = 0;
     GetMousePosition(mx, my);
     for (size_t i = 1; i <= m_text.size(); i++) {
         mousePosInText = static_cast<int>(i - 1);
         GetTextDimensions(m_text.substr(0, i), textWidth, textHeight);
-        if (mx - m_x - 5 < static_cast<int>(textWidth)) {
+        if (mx - m_x - tStartOff - 5 < static_cast<int>(textWidth)) {
             break;
         }
         if (i == m_text.size()) {
@@ -80,14 +88,6 @@ void TextEditBox::draw() {
 	ContainerBorderColor(Color{ 1.0f, 1.0f, 1.0f, 1.0f });
     ContainerBorderThickness(2);
     ContainerBegin(m_x, m_y, m_width, m_height);
-
-    // Get text starting point
-    int tStartOff = 0;
-    TextSize(m_textSize);
-    GetTextDimensions(m_text, textWidth, textHeight);
-    if (textWidth > m_width - 10) {
-        tStartOff = (m_width - 10) - textWidth;
-    }
 
     // Draw selection highlight
     if (m_selectionStart != m_selectionEnd) {
