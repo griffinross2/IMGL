@@ -5,6 +5,56 @@
 
 namespace IMGL {
 
+    void DrawTriangle(int x1, int y1, int x2, int y2, int x3, int y3, const Color& color) {
+        // Convert coordinates to screen space
+        ToScreenSpace(x1, y1);
+        ToScreenSpace(x2, y2);
+        ToScreenSpace(x3, y3);
+
+        // Draw the triangle
+        RenderList& renderList = Renderer::get()->renderList;
+        unsigned int firstIdx = renderList.vertices.size() / 7;
+        unsigned int idxOff = renderList.indices.size();
+
+        // Vertex 1
+        renderList.vertices.push_back(static_cast<float>(x1));
+        renderList.vertices.push_back(static_cast<float>(y1));
+        renderList.vertices.push_back(0.0f); // z-coordinate
+        renderList.vertices.push_back(color.r);
+        renderList.vertices.push_back(color.g);
+        renderList.vertices.push_back(color.b);
+        renderList.vertices.push_back(color.a);
+
+        // Vertex 2
+        renderList.vertices.push_back(static_cast<float>(x2));
+        renderList.vertices.push_back(static_cast<float>(y2));
+        renderList.vertices.push_back(0.0f); // z-coordinate
+        renderList.vertices.push_back(color.r);
+        renderList.vertices.push_back(color.g);
+        renderList.vertices.push_back(color.b);
+        renderList.vertices.push_back(color.a);
+
+        // Vertex 3
+        renderList.vertices.push_back(static_cast<float>(x3));
+        renderList.vertices.push_back(static_cast<float>(y3));
+        renderList.vertices.push_back(0.0f); // z-coordinate
+        renderList.vertices.push_back(color.r);
+        renderList.vertices.push_back(color.g);
+        renderList.vertices.push_back(color.b);
+        renderList.vertices.push_back(color.a);
+
+        // Add indices for the triangle
+        renderList.indices.push_back(firstIdx);
+        renderList.indices.push_back(firstIdx + 1);
+        renderList.indices.push_back(firstIdx + 2);
+
+        // Add a draw command for the triangle
+        DrawCommand drawCmd;
+        drawCmd.idxOff = idxOff;
+        drawCmd.idxCount = 3; // One triangle, 3 indices
+        renderList.commands.push_back(drawCmd);
+    }
+
     void DrawRectangle(int x, int y, int width, int height, const Color& color) {
         // Convert coordinates to screen space
         ToScreenSpace(x, y);

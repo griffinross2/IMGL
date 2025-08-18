@@ -5,6 +5,19 @@
 
 namespace IMGL {
 
+	typedef enum {
+		CURSOR_ARROW = GLFW_ARROW_CURSOR,
+		CURSOR_POINTING_HAND = GLFW_POINTING_HAND_CURSOR,
+		CURSOR_IBEAM = GLFW_IBEAM_CURSOR,
+		CURSOR_CROSSHAIR = GLFW_CROSSHAIR_CURSOR,
+		CURSOR_EW_RESIZE = GLFW_RESIZE_EW_CURSOR,
+		CURSOR_NS_RESIZE = GLFW_RESIZE_NS_CURSOR,
+		CURSOR_NWSE_RESIZE = GLFW_RESIZE_NWSE_CURSOR,
+		CURSOR_NESW_RESIZE = GLFW_RESIZE_NESW_CURSOR,
+		CURSOR_RESIZE_ALL = GLFW_RESIZE_ALL_CURSOR,
+		CURSOR_NOT_ALLOWED = GLFW_NOT_ALLOWED_CURSOR,
+	} CursorShape;
+
 	typedef struct {
 		int x;
 		int y;
@@ -13,7 +26,11 @@ namespace IMGL {
 		bool mouseMiddleClick;
 	} MouseClick;
 
+	void SetCursorShape(CursorShape shape);
+	CursorShape GetCursorShape();
+
 	void GetMousePosition(int& x, int& y);
+	bool IsMousePositionOnScreen(int x, int y);
 	void GetMouseButton(bool& left, bool& right, bool& middle);
 	MouseClick GetMouseClick();
 

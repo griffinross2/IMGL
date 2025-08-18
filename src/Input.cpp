@@ -20,11 +20,25 @@ namespace IMGL {
 	static std::vector<void(*)(int key, int action, int mod)> s_keyCallbacks;
 	static std::vector<void(*)(unsigned int codepoint)> s_charCallbacks;
 
+    static CursorShape s_currentCursorShape = CURSOR_ARROW;
+
+    void SetCursorShape(CursorShape shape) {
+        s_currentCursorShape = shape;
+    }
+
+    CursorShape GetCursorShape() {
+        return s_currentCursorShape;
+    }
+
     void GetMousePosition(int& x, int& y) {
         double xpos, ypos;
         glfwGetCursorPos(Application::getWindow(), &xpos, &ypos);
 		x = static_cast<int>(xpos);
 		y = static_cast<int>(Application::height() - ypos);
+    }
+
+    bool IsMousePositionOnScreen(int x, int y) {
+        return x >= 0 && x < static_cast<int>(Application::width()) && y >= 0 && y < static_cast<int>(Application::height());
     }
 
     MouseClick GetMouseClick() {

@@ -20,9 +20,15 @@ namespace IMGL {
     static std::vector<Container> containerStack;
 
     void ToScreenSpace(int& x, int& y);
+    void GetCurrentSpace(unsigned int& width, unsigned int& height);
+
     void ContainerBackground(const Color& color);
 	void ContainerBorderColor(const Color& color);
 	void ContainerBorderThickness(unsigned int thickness);
+    Color GetContainerBackground();
+    Color GetContainerBorderColor();
+    unsigned int GetContainerBorderThickness();
+
     void ContainerBegin(int x, int y, int width, int height);
     void ContainerEnd();
 

@@ -51,6 +51,10 @@ namespace IMGL {
         }
     }
 
+    void DestroyFontCache() {
+        s_fontCache.clear();
+    }
+
     Font::Font(const std::string& fontPath, unsigned int fontSize) {
         // Configure VAO/VBO for texture quads
         glGenVertexArrays(1, &m_VAO);

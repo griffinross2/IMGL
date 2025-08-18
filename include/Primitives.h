@@ -4,6 +4,7 @@
 
 namespace IMGL {
 
+    void DrawTriangle(int x1, int y1, int x2, int y2, int x3, int y3, const Color& color);
     void DrawRectangle(int x, int y, int width, int height, const Color& color);
 	bool CheckRectangleBounds(int x, int y, int width, int height, int pointX, int pointY);
 

@@ -40,6 +40,7 @@ Application::Application() {
 
 Application::~Application() {
     Renderer::Destroy();
+    DestroyFontCache();
 	FreeTypeDone();
     glfwTerminate();
 }
@@ -81,6 +82,11 @@ void Application::draw() {
 
     // Handle input
     ProcessInput();
+
+    // Set the cursor shape then reset the recorded state
+    CursorShape currentCursorShape = GetCursorShape();
+    glfwSetCursor(s_instance->m_glfwWindow, glfwCreateStandardCursor(static_cast<int>(currentCursorShape)));
+    SetCursorShape(CURSOR_ARROW);
 
     // Render the GUI
     Renderer::Render();

@@ -22,6 +22,7 @@ typedef struct {
 
 void FreeTypeInit();
 void FreeTypeDone();
+void DestroyFontCache();
 
 class Font {
 public:

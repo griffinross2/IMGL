@@ -22,6 +22,17 @@ void ToScreenSpace(int& x, int& y) {
     }
 }
 
+void GetCurrentSpace(unsigned int& width, unsigned int& height) {
+    if (!containerStack.empty()) {
+        const Container& container = containerStack.back();
+        width = container.width;
+        height = container.height;
+    } else {
+        width = Application::width();
+        height = Application::height();
+    }
+}
+
 void ContainerBackground(const Color& color) {
     s_container_color = color;
 }
@@ -32,6 +43,18 @@ void ContainerBorderColor(const Color& color) {
 
 void ContainerBorderThickness(unsigned int thickness) {
     s_container_border_thickness = thickness;
+}
+
+Color GetContainerBackground() {
+    return s_container_color;
+}
+
+Color GetContainerBorderColor() {
+    return s_container_border_color;
+}
+
+unsigned int GetContainerBorderThickness() {
+    return s_container_border_thickness;
 }
 
 void ContainerBegin(int x, int y, int width, int height) {
