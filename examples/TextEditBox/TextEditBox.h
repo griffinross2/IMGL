@@ -17,6 +17,8 @@ public:
     void charEventCallback(unsigned int codepoint);
 
 private:
+    bool deleteSelection(); // Returns true if a selection was deleted
+
     std::string m_text;
     int m_x;
     int m_y;
@@ -24,6 +26,7 @@ private:
     int m_height;
     bool m_active;
     int m_cursorPos;
+    double m_cursorTime;
     int m_selectionStart;
     int m_selectionEnd;
     bool m_pressing;

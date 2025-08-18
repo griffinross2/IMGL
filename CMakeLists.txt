@@ -12,13 +12,13 @@ endif(UNIX)
 
 # Configure as library
 add_library(${PROJECT_NAME} STATIC)
-install(
-    TARGETS ${PROJECT_NAME}
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    RUNTIME DESTINATION bin
-    INCLUDES DESTINATION include
-)
+# install(
+#     TARGETS ${PROJECT_NAME}
+#     LIBRARY DESTINATION lib
+#     ARCHIVE DESTINATION lib
+#     RUNTIME DESTINATION bin
+#     INCLUDES DESTINATION include
+# )
 
 # GLFW
 FetchContent_Declare(

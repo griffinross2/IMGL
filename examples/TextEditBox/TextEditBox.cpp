@@ -4,6 +4,7 @@
 #include "Text.h"
 #include "Primitives.h"
 #include "Container.h"
+#include "Application.h"
 
 #include <vector>
 
@@ -15,6 +16,7 @@ TextEditBox::TextEditBox(const std::string& text, int x, int y, int width, int h
     m_text(text), m_x(x), m_y(y), m_width(width), m_height(height) {
     m_active = false;
     m_cursorPos = 0;
+    m_cursorTime = 0.0f;
     m_selectionStart = 0;
     m_selectionEnd = 0;
     m_pressing = false;
@@ -61,6 +63,12 @@ void TextEditBox::draw() {
     MouseClick click = GetMouseClick();
     if (click.mouseLeftClick && CheckRectangleBounds(m_x, m_y, m_width, m_height, click.x, click.y)) {
         m_active = true;
+        // If this click will move the cursor, reset the cursor time to immediately show the cursor
+        if (m_cursorPos != mousePosInText) {
+            m_cursorTime = 0.0;
+        }
+        m_cursorPos = mousePosInText;
+        
     }
     else if (click.mouseLeftClick) {
         m_active = false;
@@ -72,11 +80,9 @@ void TextEditBox::draw() {
     if (!m_pressing && leftButton && CheckRectangleBounds(m_x, m_y, m_width, m_height, mx, my)) {
         m_pressing = true;
         m_selectionStart = mousePosInText;
-        m_cursorPos = mousePosInText;
     }
     if (m_pressing && leftButton) {
         m_selectionEnd = mousePosInText;
-        m_cursorPos = mousePosInText;
     }
     if (m_pressing && !leftButton) {
         m_pressing = false;
@@ -110,12 +116,15 @@ void TextEditBox::draw() {
     // Draw cursor if active
     if (m_active) {
         // Simple cursor blink
-        double time = glfwGetTime();
-        if (static_cast<int>(time * 2) % 2 == 0) {
+        if (static_cast<int>(m_cursorTime * 2.0) % 2 == 0) {
             // Calculate cursor position
             unsigned int cursorX;
             GetTextDimensions(m_text.substr(0, m_cursorPos), cursorX, textHeight);
             DrawRectangle(5 + cursorX + tStartOff, (m_height - m_textSize) / 2, 1, m_textSize, Color{ 1.0f, 1.0f, 1.0f, 1.0f });
+        }
+        m_cursorTime += Application::deltaTime();
+        if (m_cursorTime > 1.0) {
+            m_cursorTime = 0.0;
         }
     }
 
@@ -124,7 +133,9 @@ void TextEditBox::draw() {
 
 void TextEditBox::keyEventCallback(int key, int action, int mod) {
     if (key == GLFW_KEY_LEFT && m_active && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+        // Move cursor left
         if (m_cursorPos > 0) {
+            m_cursorTime = 0.0; // Reset cursor blink so its visible immediately
             m_cursorPos--;
             m_selectionEnd = m_cursorPos;
         }
@@ -133,7 +144,9 @@ void TextEditBox::keyEventCallback(int key, int action, int mod) {
         }
     }
     if (key == GLFW_KEY_RIGHT && m_active && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+        // Move cursor right
         if (m_cursorPos < static_cast<int>(m_text.size())) {
+            m_cursorTime = 0.0; // Reset cursor blink so its visible immediately
             m_cursorPos++;
             m_selectionEnd = m_cursorPos;
         }
@@ -142,17 +155,18 @@ void TextEditBox::keyEventCallback(int key, int action, int mod) {
         }
     }
     if (key == GLFW_KEY_BACKSPACE && m_active && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
-        if (m_selectionStart != m_selectionEnd) {
-            int selStart = std::min(m_selectionStart, m_selectionEnd);
-            int selEnd = std::max(m_selectionStart, m_selectionEnd);
-            m_text.erase(selStart, selEnd - selStart);
-            m_cursorPos = selStart;
-            m_selectionStart = selStart;
-            m_selectionEnd = selStart;
-        }
-        else if (m_cursorPos > 0) {
+        // Delete selection or delete character before cursor
+        if (!deleteSelection() && m_cursorPos > 0) {
             m_text.erase(m_cursorPos - 1, 1);
             m_cursorPos--;
+            m_selectionStart = m_cursorPos;
+            m_selectionEnd = m_cursorPos;
+        }
+    }
+    if (key == GLFW_KEY_DELETE && m_active && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+        // Delete selection or delete character after cursor
+        if (!deleteSelection() && m_cursorPos < static_cast<int>(m_text.size())) {
+            m_text.erase(m_cursorPos, 1);
             m_selectionStart = m_cursorPos;
             m_selectionEnd = m_cursorPos;
         }
@@ -168,14 +182,7 @@ void TextEditBox::keyEventCallback(int key, int action, int mod) {
 void TextEditBox::charEventCallback(unsigned int codepoint) {
     if (m_active) {
         // If there is a selection, delete it first
-        if (m_selectionStart != m_selectionEnd) {
-            int selStart = std::min(m_selectionStart, m_selectionEnd);
-            int selEnd = std::max(m_selectionStart, m_selectionEnd);
-            m_text.erase(selStart, selEnd - selStart);
-            m_cursorPos = selStart;
-            m_selectionStart = selStart;
-            m_selectionEnd = selStart;
-        }
+        deleteSelection();
         // Insert the character at the cursor position
         m_text.insert(m_cursorPos, 1, static_cast<char>(codepoint));
         m_cursorPos++;
@@ -194,4 +201,17 @@ void textEditBoxCharEventCallback(unsigned int codepoint) {
     for (TextEditBox* boxPtr : s_textEditBoxes) {
         boxPtr->charEventCallback(codepoint);
     }
+}
+
+bool TextEditBox::deleteSelection() {
+    if (m_selectionStart != m_selectionEnd) {
+        int selStart = std::min(m_selectionStart, m_selectionEnd);
+        int selEnd = std::max(m_selectionStart, m_selectionEnd);
+        m_text.erase(selStart, selEnd - selStart);
+        m_cursorPos = selStart;
+        m_selectionStart = selStart;
+        m_selectionEnd = selStart;
+        return true;
+    }
+    return false;
 }

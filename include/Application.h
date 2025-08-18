@@ -22,6 +22,7 @@ public:
     static void draw();
     static unsigned int height();
     static unsigned int width();
+    static double deltaTime();
 
     static Application* getInstance();
 	static GLFWwindow* getWindow();
@@ -29,9 +30,11 @@ public:
 private:
     void handleInput();
 
-    ShaderManager shaderManager;
-    GLFWwindow* glfwWindow = nullptr;
-    std::unique_ptr<Renderer> renderer;
+    double m_lastTime;
+    double m_deltaTime;
+    ShaderManager m_shaderManager;
+    GLFWwindow* m_glfwWindow = nullptr;
+    std::unique_ptr<Renderer> m_renderer;
 };
 
 }
