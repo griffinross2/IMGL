@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.26)
-project(BasicTabs)
+project(Tabs)
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 23)
