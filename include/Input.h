@@ -26,9 +26,15 @@ namespace IMGL {
 		bool mouseMiddleClick;
 	} MouseClick;
 
+	// Global input control and masking
+	void SetInputOn();
+	void SetInputOff();
+	void SetInputMask(int x, int y, int w, int h);
+	void InputDemask();
 	void SetCursorShape(CursorShape shape);
 	CursorShape GetCursorShape();
 
+	bool CheckInputEnabled(int x, int y);
 	void GetMousePosition(int& x, int& y);
 	bool IsMousePositionOnScreen(int x, int y);
 	void GetMouseButton(bool& left, bool& right, bool& middle);

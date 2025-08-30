@@ -8,12 +8,17 @@ public:
     DraggableResizableContainer(const std::string& title, int x, int y, unsigned int width, unsigned int height, unsigned int minWidth = 20, unsigned int minHeight = 20);
     ~DraggableResizableContainer();
 
-    int GetWidth() const { return m_width; }
-    int GetHeight() const { return m_height; }
+    int getX() const { return m_x; }
+    int getY() const { return m_y; }
+    int getWidth() const { return m_width; }
+    int getHeight() const { return m_height; }
+
+    // We can see if the container has been pressed, for assigning focus
+    bool pressed();
 
     // Reimplement the begin, end structure from normal containers
-    void DrawBegin();
-    void DrawEnd();
+    void drawBegin();
+    void drawEnd();
 
 private:
     std::string m_title;

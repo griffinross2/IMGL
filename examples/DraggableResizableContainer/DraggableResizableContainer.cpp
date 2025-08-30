@@ -28,7 +28,7 @@ DraggableResizableContainer::~DraggableResizableContainer() {
 }
 
 // Reimplement the begin, end structure from normal containers
-void DraggableResizableContainer::DrawBegin() {
+void DraggableResizableContainer::drawBegin() {
     unsigned int textWidth, textHeight;
     GetTextDimensions(m_title, textWidth, textHeight);
     int titleBarHeight = textHeight + 7;
@@ -41,17 +41,17 @@ void DraggableResizableContainer::DrawBegin() {
     bool leftButton, rightButton, middleButton;
     GetMousePosition(mx, my);
     GetMouseButton(leftButton, rightButton, middleButton);
-    if (CheckRectangleBounds(m_x, m_y + m_height - titleBarHeight, m_width, titleBarHeight, mx, my)) {
+    if (CheckRectangleBounds(m_x, m_y + m_height - titleBarHeight, m_width, titleBarHeight, mx, my) && CheckInputEnabled(mx, my)) {
         // Drag cursor shape for the title bar
         SetCursorShape(CURSOR_RESIZE_ALL);
     }
-    if (CheckRectangleBounds(m_x + m_width - 10, m_y, 10, 10, mx, my)) {
+    if (CheckRectangleBounds(m_x + m_width - 10, m_y, 10, 10, mx, my) && CheckInputEnabled(mx, my)) {
         // Resize NWSE cursor shape for the resize triangle
         SetCursorShape(CURSOR_NWSE_RESIZE);
     }
 
     // Check if the title bar is being dragged
-    if (!m_dragging && !m_resizing && leftButton && CheckRectangleBounds(m_x, m_y + m_height - titleBarHeight, m_width, titleBarHeight, mx, my)) {
+    if (!m_dragging && !m_resizing && leftButton && CheckRectangleBounds(m_x, m_y + m_height - titleBarHeight, m_width, titleBarHeight, mx, my) && CheckInputEnabled(mx, my)) {
         m_dragging = true;
         m_dragOffsetX = mx - m_x;
         m_dragOffsetY = my - m_y;
@@ -73,7 +73,7 @@ void DraggableResizableContainer::DrawBegin() {
     }
 
     // Check if the resize triangle is being dragged
-    if (!m_dragging && !m_resizing && leftButton && CheckRectangleBounds(m_x + m_width - 10, m_y, 10, 10, mx, my)) {
+    if (!m_dragging && !m_resizing && leftButton && CheckRectangleBounds(m_x + m_width - 10, m_y, 10, 10, mx, my) && CheckInputEnabled(mx, my)) {
         m_resizing = true;
         m_dragOffsetY = my - m_y;
     } else if (m_resizing && leftButton) {
@@ -115,6 +115,14 @@ void DraggableResizableContainer::DrawBegin() {
     DrawTriangle(m_width - 10, 5, m_width - 5, 5, m_width - 5, 10, GetContainerBorderColor());
 }
 
-void DraggableResizableContainer::DrawEnd() {
+void DraggableResizableContainer::drawEnd() {
     ContainerEnd();
+}
+
+bool DraggableResizableContainer::pressed() {
+    int mx, my;
+    bool leftButton, rightButton, middleButton;
+    GetMousePosition(mx, my);
+    GetMouseButton(leftButton, rightButton, middleButton);
+    return leftButton && CheckRectangleBounds(m_x, m_y, m_width, m_height, mx, my);
 }

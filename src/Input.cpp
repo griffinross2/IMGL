@@ -2,6 +2,7 @@
 
 #include "Container.h"
 #include "Application.h"
+#include "Primitives.h"
 
 #include <iostream>
 #include <array>
@@ -21,6 +22,48 @@ namespace IMGL {
 	static std::vector<void(*)(unsigned int codepoint)> s_charCallbacks;
 
     static CursorShape s_currentCursorShape = CURSOR_ARROW;
+
+    static bool s_inputEnabled = true;
+    static bool s_inputMaskEnabled = true;
+    static int s_inputMaskX = 0;
+    static int s_inputMaskY = 0;
+    static int s_inputMaskW = 0;
+    static int s_inputMaskH = 0;
+
+    bool CheckInputEnabled(int x, int y) {
+        // Check if inputs are completely disabled
+        if (!s_inputEnabled) {
+            return false;
+        }
+
+        // Check input mask
+        if (s_inputMaskEnabled && !CheckRectangleBounds(s_inputMaskX, s_inputMaskY, s_inputMaskW, s_inputMaskH, x, y)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    void SetInputOn() {
+        s_inputEnabled = true;
+    }
+
+    void SetInputOff() {
+        s_inputEnabled = false;
+    }
+
+    void SetInputMask(int x, int y, int w, int h) {
+        ToScreenSpace(x, y);
+        s_inputMaskX = x;
+        s_inputMaskY = y;
+        s_inputMaskW = w;
+        s_inputMaskH = h;
+        s_inputMaskEnabled = true;
+    }
+
+    void InputDemask() {
+        s_inputMaskEnabled = false;
+    }
 
     void SetCursorShape(CursorShape shape) {
         s_currentCursorShape = shape;
@@ -58,7 +101,7 @@ namespace IMGL {
     void GetMouseButton(bool& left, bool& right, bool& middle) {
         left = s_mouseButtonStates[GLFW_MOUSE_BUTTON_LEFT];
         right = s_mouseButtonStates[GLFW_MOUSE_BUTTON_RIGHT];
-		middle = s_mouseButtonStates[GLFW_MOUSE_BUTTON_MIDDLE];
+        middle = s_mouseButtonStates[GLFW_MOUSE_BUTTON_MIDDLE];
     }
 
     void AddKeyEventCallback(void func(int key, int action, int mod)) {
