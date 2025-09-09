@@ -25,8 +25,10 @@ namespace IMGL {
 		void use();
 		// Utility uniform functions
 		void setBool(const std::string& name, bool value);
+		void setUint(const std::string& name, unsigned int value);
 		void setInt(const std::string& name, int value);
 		void setFloat(const std::string& name, float value);
+		void setUVec2(const std::string& name, unsigned int x, unsigned int y);
 		void setVec2(const std::string& name, float x, float y);
 		void setVec3(const std::string& name, float x, float y, float z);
 		void setVec4(const std::string& name, float x, float y, float z, float w);

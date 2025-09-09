@@ -206,12 +206,20 @@ void Shader::setBool(const std::string& name, bool value) {
     glUniform1i(glGetUniformLocation(id, name.c_str()), (int)value);
 }
 
+void Shader::setUint(const std::string& name, unsigned int value) {
+    glUniform1ui(glGetUniformLocation(id, name.c_str()), value);
+}
+
 void Shader::setInt(const std::string& name, int value) {
     glUniform1i(glGetUniformLocation(id, name.c_str()), value);
 }
 
 void Shader::setFloat(const std::string& name, float value) {
     glUniform1f(glGetUniformLocation(id, name.c_str()), value);
+}
+
+void Shader::setUVec2(const std::string& name, unsigned int x, unsigned int y) {
+	glUniform2ui(glGetUniformLocation(id, name.c_str()), x, y);
 }
 
 void Shader::setVec2(const std::string& name, float x, float y) {
