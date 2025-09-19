@@ -15,7 +15,6 @@ DraggableResizableContainer draggable2("Draggable Resizable Container 2", 150, 1
 
 void drawFirstContainer();
 void drawSecondContainer();
-int focus = 0;
 
 int main() {
     Application app;
@@ -27,14 +26,8 @@ int main() {
 
     // Main loop
     while (!Application::shouldClose()) {
-
-        // Draw bottom (unfocused) container
         drawFirstContainer();
         drawSecondContainer();
-
-        // Set new focus
-        if (!focus && draggable.pressed() && !draggable2.pressed()) focus = 1;
-        else if (focus && draggable2.pressed() && !draggable.pressed()) focus = 0;
 
         Application::draw();
 

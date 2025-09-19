@@ -13,7 +13,32 @@ static Color s_container_color = DefaultContainerColor;
 static Color s_container_border_color = DefaultContainerBorderColor;
 unsigned int s_container_border_thickness = DefaultContainerBorderThickness;
 
-static void FocusContainer(std::shared_ptr<Container> container) {
+// Persistent storage for containers
+static std::map<std::string, std::shared_ptr<Container>> containers;
+const std::map<std::string, std::shared_ptr<Container>>& GetContainers() {
+    return containers;
+}
+
+// Persistent stack to track the order of containers on top of each other
+// Any container that is focused will be moved to the top of this stack
+static std::list<std::shared_ptr<Container>> focusStack;
+const std::list<std::shared_ptr<Container>>& GetFocusStack() {
+    return focusStack;
+}
+
+// Per frame stack that tracks the nested containers we are drawing inside of
+static std::vector<std::shared_ptr<Container>> containerStack;
+const std::vector<std::shared_ptr<Container>>& GetContainerStack() {
+    return containerStack;
+}
+
+// Root container
+static const std::shared_ptr<Container> rootContainer = std::make_shared<Container>();
+const std::shared_ptr<Container>& GetRootContainer() {
+    return rootContainer;
+}
+
+void ContainerFocus(std::shared_ptr<Container> container) {
     focusStack.remove(container);
     focusStack.push_back(container);
 }
@@ -23,7 +48,7 @@ static std::shared_ptr<Container> FindOrCreateContainer(const std::string& name,
 		// Container does not already exist, create it
 		std::shared_ptr<Container> newContainer = std::make_shared<Container>(width, height, x, y);
         containers[name] = newContainer;
-        FocusContainer(newContainer);
+        ContainerFocus(newContainer);
         return newContainer;
     }
     else {
@@ -95,39 +120,46 @@ void ContainerBegin(const std::string& name) {
 	width = container->width;
 	height = container->height;
 
+    // Push the container onto the stack
+    containerStack.push_back(container);
+
     // Set the scissor area to the container's dimensions
-    int scissorX = x;
-    int scissorY = y;
+    int scissorX = 0;
+    int scissorY = 0;
     ToScreenSpace(scissorX, scissorY);
     Renderer::RenderList()->commands.push_back(ScissorCommand{static_cast<unsigned int>(scissorX), static_cast<unsigned int>(scissorY), static_cast<unsigned int>(width), static_cast<unsigned int>(height)});
 
     // Draw the container background
-    DrawRectangle(x, y, width, height, s_container_color);
+    DrawRectangle(0, 0, width, height, s_container_color);
 
 	// Draw the container border
     if (s_container_border_thickness > 0) {
-        DrawBorder(x, y, width, height, s_container_border_color, s_container_border_thickness);
+        DrawBorder(0, 0, width, height, s_container_border_color, s_container_border_thickness);
     }
-
-    // Push the container onto the stack
-    containerStack.push_back(container);
 }
 
 void ContainerEnd() {
-    if (!containerStack.empty()) {
-        containerStack.pop_back();
-    }
-
     // Restore the scissor to the previous container's dimensions
-    if (!containerStack.empty()) {
-        std::shared_ptr<Container> container = containerStack.back();
+    if (containerStack.size() > 1) {
+        std::shared_ptr<Container> container = containerStack[containerStack.size() - 2];
 		int scissorX = container->x;
 		int scissorY = container->y;
-		ToScreenSpace(scissorX, scissorY);
+
+        // Cursed conversion to screen space without using the container we are about to end
+        for (int i = static_cast<int>(containerStack.size()) - 2; i >= 0; --i) {
+            std::shared_ptr<Container> container = containerStack[i];
+            scissorX += container->x;
+            scissorY += container->y;
+        }
+
         Renderer::RenderList()->commands.push_back(ScissorCommand{static_cast<unsigned int>(scissorX), static_cast<unsigned int>(scissorY), static_cast<unsigned int>(container->width), static_cast<unsigned int>(container->height)});
     } else {
         // If no containers are left, expand the scissor to the full window size
         Renderer::RenderList()->commands.push_back(ScissorCommand{0, 0, Application::width(), Application::height()});
+    }
+
+    if (!containerStack.empty()) {
+        containerStack.pop_back();
     }
 }
 
@@ -151,7 +183,7 @@ void ContainerFocus() {
     if (!containerStack.empty()) {
         std::shared_ptr<Container> container = containerStack.back();
 		if (container->canFocus) {
-            FocusContainer(container);
+            ContainerFocus(container);
         }
     }
 }

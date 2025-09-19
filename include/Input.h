@@ -1,5 +1,9 @@
 #pragma once
 
+#include <memory>
+
+#include "Container.h"
+
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 
@@ -26,11 +30,6 @@ namespace IMGL {
 		bool mouseMiddleClick;
 	} MouseClick;
 
-	// Global input control and masking
-	void SetInputOn();
-	void SetInputOff();
-	void SetInputMask(int x, int y, int w, int h);
-	void InputDemask();
 	void SetCursorShape(CursorShape shape);
 	CursorShape GetCursorShape();
 
@@ -39,6 +38,8 @@ namespace IMGL {
 	bool IsMousePositionOnScreen(int x, int y);
 	void GetMouseButton(bool& left, bool& right, bool& middle);
 	MouseClick GetMouseClick();
+	std::shared_ptr<Container> GetMouseOverContainer();
+	bool IsMouseOverThisContainer();
 
 	void AddKeyEventCallback(void func(int key, int action, int mod));
 	void AddCharEventCallback(void func(unsigned int codepoint));

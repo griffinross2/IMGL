@@ -31,19 +31,6 @@ namespace IMGL {
 		RenderList renderList;
     };
 
-	// Persistent storage for containers
-	static std::map<std::string, std::shared_ptr<Container>> containers;
-
-	// Persistent stack to track the order of containers on top of each other
-	// Any container that is focused will be moved to the top of this stack
-    static std::list<std::shared_ptr<Container>> focusStack;
-
-	// Per frame stack that tracks the nested containers we are drawing inside of
-    static std::vector<std::shared_ptr<Container>> containerStack;
-
-    // Root container
-	static const std::shared_ptr<Container> rootContainer = std::make_shared<Container>();
-
     void ToScreenSpace(int& x, int& y);
     void GetCurrentSpace(unsigned int& width, unsigned int& height);
 
@@ -54,10 +41,16 @@ namespace IMGL {
     Color GetContainerBorderColor();
     unsigned int GetContainerBorderThickness();
 
+    const std::map<std::string, std::shared_ptr<Container>>& GetContainers();
+	const std::list<std::shared_ptr<Container>>& GetFocusStack();
+    const std::vector<std::shared_ptr<Container>>& GetContainerStack();
+	const std::shared_ptr<Container>& GetRootContainer();
+
     void ContainerBegin(const std::string& name);
 	void ContainerMove(int x, int y);
 	void ContainerSize(int width, int height);
 	void ContainerFocus();
+	void ContainerFocus(std::shared_ptr<Container> container);
     void ContainerEnd();
 
 }

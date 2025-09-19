@@ -112,21 +112,21 @@ void Renderer::RenderContainer(std::shared_ptr<void> containerVoid) {
 
 void Renderer::Render() {
 	// Render the root container first
-	RenderContainer(rootContainer);
+	RenderContainer(GetRootContainer());
 
-    for (std::shared_ptr<Container> container : focusStack) {
+    for (std::shared_ptr<Container> container : GetFocusStack()) {
 		RenderContainer(container);
     }
 }
 
 RenderList* Renderer::RenderList() {
-    if (!containerStack.empty()) {
-        std::shared_ptr<Container> container = containerStack.back();
+    if (!GetContainerStack().empty()) {
+        std::shared_ptr<Container> container = GetContainerStack().back();
 		return &container->renderList;
     }
 
 	// If the stack is empty, return the "root" container
-	return &rootContainer->renderList;
+	return &GetRootContainer()->renderList;
 }
 
 }

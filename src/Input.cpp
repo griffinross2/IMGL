@@ -10,6 +10,7 @@
 
 namespace IMGL {
 
+	static int s_mouseX = 0, s_mouseY = 0;
     static std::array<bool, 3> s_mouseButtonStates = { false, false, false }; // Left, Right, Middle
     static std::array<std::pair<int, int>, 3> s_mousePressedAt = { std::pair{-1, -1}, std::pair{-1, -1}, std::pair{-1, -1} };
     static std::array<std::pair<int, int>, 3> s_mouseReleasedAt = { std::pair{-1, -1}, std::pair{-1, -1}, std::pair{-1, -1} };
@@ -74,15 +75,30 @@ namespace IMGL {
     }
 
     void GetMousePosition(int& x, int& y) {
-        double xpos, ypos;
-        glfwGetCursorPos(Application::getWindow(), &xpos, &ypos);
-		x = static_cast<int>(xpos);
-		y = static_cast<int>(Application::height() - ypos);
+		x = s_mouseX;
+		y = s_mouseY;
     }
 
-    bool IsMousePositionOnScreen(int x, int y) {
-        return x >= 0 && x < static_cast<int>(Application::width()) && y >= 0 && y < static_cast<int>(Application::height());
+    bool IsMousePositionOnScreen() {
+        return s_mouseX >= 0 && s_mouseX < static_cast<int>(Application::width()) && s_mouseY >= 0 && s_mouseY < static_cast<int>(Application::height());
     }
+
+    std::shared_ptr<Container> GetMouseOverContainer() {
+        for (auto it = GetFocusStack().rbegin(); it != GetFocusStack().rend(); ++it) {
+            std::shared_ptr<Container> container = *it;
+			if (CheckRectangleBounds(container->x, container->y, container->width, container->height, s_mouseX, s_mouseY)) {
+                return container;
+            }
+        }
+		return GetRootContainer();
+    }
+
+    bool IsMouseOverThisContainer() {
+        if (!GetContainerStack().empty()) {
+			return GetContainerStack().back() == GetMouseOverContainer();
+        }
+        return false;
+	}
 
     MouseClick GetMouseClick() {
 		int x, y;
@@ -133,29 +149,31 @@ namespace IMGL {
 		int height = Application::height();
 		GLFWwindow* window = Application::getWindow();
 
+		// Record mouse position
+		double xpos, ypos;
+		glfwGetCursorPos(window, &xpos, &ypos);
+		s_mouseX = static_cast<int>(xpos);
+		s_mouseY = height - static_cast<int>(ypos);
+
         for (int button = GLFW_MOUSE_BUTTON_LEFT; button <= GLFW_MOUSE_BUTTON_MIDDLE; button++) {
             bool clicked = false;
 
             if (glfwGetMouseButton(window, button) == GLFW_PRESS) {
-                double xpos, ypos;
-                glfwGetCursorPos(window, &xpos, &ypos);
-
                 // If the button was not already pressed, register the press
+                // Also, when a container is pressed, focus it
                 if (!s_mouseButtonStates[button]) {
-                    s_mousePressedAt[button] = { (int)xpos, height - (int)ypos };
+                    s_mousePressedAt[button] = { s_mouseX, s_mouseY };
+                    ContainerFocus(GetMouseOverContainer());
                 }
 
                 // Record the state
                 s_mouseButtonStates[button] = true;
             }
             else if (glfwGetMouseButton(window, button) == GLFW_RELEASE && s_mouseButtonStates[button]) {
-                double xpos, ypos;
-                glfwGetCursorPos(window, &xpos, &ypos);
-
                 // If the button was not already released, register the release
                 if (s_mouseButtonStates[button]) {
                     clicked = true;
-                    s_mouseReleasedAt[button] = { (int)xpos, height - (int)ypos };
+                    s_mouseReleasedAt[button] = { s_mouseX, s_mouseY };
                 }
 
                 // Record the state
