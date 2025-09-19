@@ -1,10 +1,12 @@
 #include "Application.h"
 
+#include "Container.h"
 #include "Text.h"
 #include "Input.h"
 
 #include <iostream>
 #include <string>
+#include <memory>
 
 namespace IMGL {
 

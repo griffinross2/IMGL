@@ -41,6 +41,8 @@ void DraggableResizableContainer::drawBegin() {
     bool leftButton, rightButton, middleButton;
     GetMousePosition(mx, my);
     GetMouseButton(leftButton, rightButton, middleButton);
+
+
     if (CheckRectangleBounds(m_x, m_y + m_height - titleBarHeight, m_width, titleBarHeight, mx, my) && CheckInputEnabled(mx, my)) {
         // Drag cursor shape for the title bar
         SetCursorShape(CURSOR_RESIZE_ALL);
@@ -109,7 +111,10 @@ void DraggableResizableContainer::drawBegin() {
     DrawText(m_title, m_x + 5, m_y + m_height - (titleBarHeight + textHeight) / 2);
 
     // Begin the normal container (minus title bar height)
-    ContainerBegin(m_x, m_y, m_width, m_height - titleBarHeight);
+    ContainerBegin(m_title);
+	ContainerMove(m_x, m_y);
+	ContainerSize(m_width, m_height - titleBarHeight);
+	ContainerFocus();
 
     // Resize arrow
     DrawTriangle(m_width - 10, 5, m_width - 5, 5, m_width - 5, 10, GetContainerBorderColor());

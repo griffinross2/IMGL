@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <variant>
+#include <memory>
 
 // Render.h
 // This file contains the rendering functions for the IMGL library.
@@ -37,8 +38,6 @@ namespace IMGL {
         std::vector<unsigned int> indices;
     };
 
-
-
     class Renderer {
 
     public:
@@ -46,11 +45,14 @@ namespace IMGL {
         ~Renderer() = default;
 
         static Renderer* get();
+        static RenderList* RenderList();
         static void Render();
         static void Destroy();
 
         static unsigned int VAO, VBO, EBO;
-        static RenderList renderList;
+
+    private:
+        static void RenderContainer(std::shared_ptr<void> container);
 
     };
 

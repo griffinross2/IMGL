@@ -27,21 +27,10 @@ int main() {
 
     // Main loop
     while (!Application::shouldClose()) {
+
         // Draw bottom (unfocused) container
-        SetInputOff();
-        if (!focus) drawFirstContainer(); else drawSecondContainer();
-        
-        // Draw top (focused) container
-        SetInputOn();
-        if (!focus) {
-            SetInputMask(draggable2.getX(), draggable2.getY(), draggable2.getWidth(), draggable2.getHeight());
-            drawSecondContainer();
-        }
-        else {
-            SetInputMask(draggable.getX(), draggable.getY(), draggable.getWidth(), draggable.getHeight());
-            drawFirstContainer();
-        }
-        InputDemask();
+        drawFirstContainer();
+        drawSecondContainer();
 
         // Set new focus
         if (!focus && draggable.pressed() && !draggable2.pressed()) focus = 1;

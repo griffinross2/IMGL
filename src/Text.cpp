@@ -240,7 +240,7 @@ namespace IMGL {
             .callback = DrawTextCallback,
             .data = static_cast<void*>(textObj),
         };
-        IMGL::Renderer::get()->renderList.commands.push_back(callback);
+        IMGL::Renderer::RenderList()->commands.push_back(callback);
     }
 
     void DrawTextCallback(void* textObj) {

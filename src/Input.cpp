@@ -24,7 +24,7 @@ namespace IMGL {
     static CursorShape s_currentCursorShape = CURSOR_ARROW;
 
     static bool s_inputEnabled = true;
-    static bool s_inputMaskEnabled = true;
+    static bool s_inputMaskEnabled = false;
     static int s_inputMaskX = 0;
     static int s_inputMaskY = 0;
     static int s_inputMaskW = 0;

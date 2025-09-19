@@ -12,7 +12,6 @@
 namespace IMGL {
 
 unsigned int Renderer::VAO = 0, Renderer::VBO = 0, Renderer::EBO = 0;
-RenderList Renderer::renderList;
 Renderer* instance = nullptr;
 
 Renderer::Renderer() {
@@ -58,14 +57,16 @@ Renderer* Renderer::get() {
     return instance;
 }
 
-void Renderer::Render() {
+void Renderer::RenderContainer(std::shared_ptr<void> containerVoid) {
+	std::shared_ptr<Container> container = std::static_pointer_cast<Container>(containerVoid);
+
     glBindVertexArray(VAO);
-    
+
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, renderList.vertices.size() * sizeof(float), renderList.vertices.data(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, container->renderList.vertices.size() * sizeof(float), container->renderList.vertices.data(), GL_DYNAMIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, renderList.indices.size() * sizeof(unsigned int), renderList.indices.data(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, container->renderList.indices.size() * sizeof(unsigned int), container->renderList.indices.data(), GL_DYNAMIC_DRAW);
 
     // Reset scissor to the full window size
     glScissor(0, 0, Application::width(), Application::height());
@@ -76,11 +77,12 @@ void Renderer::Render() {
     glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(Application::width()), 0.0f, static_cast<float>(Application::height()));
     shader->setMat4("projection", glm::value_ptr(projection));
 
-    for (const RenderCommand& cmd : renderList.commands) {
+    for (const RenderCommand& cmd : container->renderList.commands) {
         if (std::holds_alternative<DrawCommand>(cmd)) {
             const DrawCommand& drawCmd = std::get<DrawCommand>(cmd);
             glDrawElements(GL_TRIANGLES, drawCmd.idxCount, GL_UNSIGNED_INT, (void*)(drawCmd.idxOff * sizeof(unsigned int)));
-        } else if (std::holds_alternative<CustomCallback>(cmd)) {
+        }
+        else if (std::holds_alternative<CustomCallback>(cmd)) {
             const CustomCallback& customCmd = std::get<CustomCallback>(cmd);
             customCmd.callback(customCmd.data);
 
@@ -92,19 +94,39 @@ void Renderer::Render() {
 
             glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(Application::width()), 0.0f, static_cast<float>(Application::height()));
             shader->setMat4("projection", glm::value_ptr(projection));
-        } else if (std::holds_alternative<ScissorCommand>(cmd)) {
+        }
+        else if (std::holds_alternative<ScissorCommand>(cmd)) {
             const ScissorCommand& scissorCmd = std::get<ScissorCommand>(cmd);
             glScissor(scissorCmd.x, scissorCmd.y, scissorCmd.width, scissorCmd.height);
         }
     }
-    
+
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    renderList.commands.clear();
-    renderList.vertices.clear();
-    renderList.indices.clear();
+    container->renderList.commands.clear();
+    container->renderList.vertices.clear();
+    container->renderList.indices.clear();
+}
+
+void Renderer::Render() {
+	// Render the root container first
+	RenderContainer(rootContainer);
+
+    for (std::shared_ptr<Container> container : focusStack) {
+		RenderContainer(container);
+    }
+}
+
+RenderList* Renderer::RenderList() {
+    if (!containerStack.empty()) {
+        std::shared_ptr<Container> container = containerStack.back();
+		return &container->renderList;
+    }
+
+	// If the stack is empty, return the "root" container
+	return &rootContainer->renderList;
 }
 
 }
