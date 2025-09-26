@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <functional>
 
 #include "Container.h"
 
@@ -30,6 +31,9 @@ namespace IMGL {
 		bool mouseMiddleClick;
 	} MouseClick;
 
+	typedef std::function<void(int, int, int)> KeyEventCallbackFunc;
+	typedef std::function<void(unsigned int)> CharEventCallbackFunc;
+
 	void SetCursorShape(CursorShape shape);
 	CursorShape GetCursorShape();
 
@@ -41,8 +45,8 @@ namespace IMGL {
 	std::shared_ptr<Container> GetMouseOverContainer();
 	bool IsMouseOverThisContainer();
 
-	void AddKeyEventCallback(void func(int key, int action, int mod));
-	void AddCharEventCallback(void func(unsigned int codepoint));
+	void AddKeyEventCallback(KeyEventCallbackFunc func);
+	void AddCharEventCallback(CharEventCallbackFunc func);
 
 	void KeyEventCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	void CharEventCallback(GLFWwindow* window, unsigned int codepoint);

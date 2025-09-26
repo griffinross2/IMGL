@@ -17,7 +17,7 @@ namespace IMGL {
 	static const unsigned int DefaultContainerBorderThickness = 1;
 
 	static const Color DefaultTextColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-	static const unsigned int DefaultTextSize = 16;
+	static const unsigned int DefaultTextSize = 12;
 
 	static const Color DefaultButtonColor = { 0.4f, 0.4f, 0.4f, 1.0f };
 	static const Color DefaultButtonHoverColor = { 0.5f, 0.5f, 0.5f, 1.0f };

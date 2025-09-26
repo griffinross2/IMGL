@@ -122,6 +122,11 @@ namespace IMGL {
                (pointY >= y) && (pointY <= y + height);
 	}
 
+    bool CheckRectangleBoundsGlobal(int x, int y, int width, int height, int pointX, int pointY) {
+        return (pointX >= x) && (pointX <= x + width) &&
+            (pointY >= y) && (pointY <= y + height);
+    }
+
     void DrawLine(int x1, int y1, int x2, int y2, const Color& color, unsigned int thickness) {
     }
 

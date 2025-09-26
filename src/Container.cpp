@@ -122,17 +122,28 @@ void ContainerBegin(const std::string& name) {
 
     // Push the container onto the stack
     containerStack.push_back(container);
+}
+
+void ContainerDraw() {
+    if (containerStack.empty()) {
+		// No container to draw
+        return;
+    }
+
+    std::shared_ptr<Container> container = containerStack.back();
+    int width = container->width;
+    int height = container->height;
 
     // Set the scissor area to the container's dimensions
     int scissorX = 0;
     int scissorY = 0;
     ToScreenSpace(scissorX, scissorY);
-    Renderer::RenderList()->commands.push_back(ScissorCommand{static_cast<unsigned int>(scissorX), static_cast<unsigned int>(scissorY), static_cast<unsigned int>(width), static_cast<unsigned int>(height)});
+    Renderer::RenderList()->commands.push_back(ScissorCommand{ static_cast<unsigned int>(scissorX), static_cast<unsigned int>(scissorY), static_cast<unsigned int>(width), static_cast<unsigned int>(height) });
 
     // Draw the container background
     DrawRectangle(0, 0, width, height, s_container_color);
 
-	// Draw the container border
+    // Draw the container border
     if (s_container_border_thickness > 0) {
         DrawBorder(0, 0, width, height, s_container_border_color, s_container_border_thickness);
     }

@@ -47,6 +47,7 @@ namespace IMGL {
 	const std::shared_ptr<Container>& GetRootContainer();
 
     void ContainerBegin(const std::string& name);
+    void ContainerDraw();
 	void ContainerMove(int x, int y);
 	void ContainerSize(int width, int height);
 	void ContainerFocus();

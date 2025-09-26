@@ -56,6 +56,8 @@ void Application::setWindowTitle(const char* title) {
 void Application::setWindowSize(unsigned int width, unsigned int height) {
     if (s_instance->m_glfwWindow) {
         glfwSetWindowSize(s_instance->m_glfwWindow, static_cast<int>(width), static_cast<int>(height));
+		s_instance->m_width = width;
+		s_instance->m_height = height;
     }
 }
 
@@ -68,9 +70,17 @@ void Application::draw() {
     glfwMakeContextCurrent(s_instance->m_glfwWindow);
     glfwPollEvents();
     
+    // Get scale factor
+	float xscale, yscale;
+	glfwGetWindowContentScale(s_instance->m_glfwWindow, &xscale, &yscale);
+	s_instance->m_hscale = xscale;
+	s_instance->m_vscale = yscale;
+
     // Update viewport
     int width, height;
     glfwGetFramebufferSize(s_instance->m_glfwWindow, &width, &height);
+	s_instance->m_width = static_cast<unsigned int>(width);
+	s_instance->m_height = static_cast<unsigned int>(height);
     glViewport(0, 0, width, height);
 
     // Clear screen
@@ -98,15 +108,21 @@ void Application::draw() {
 }
 
 unsigned int Application::height() {
-    int height;
-    glfwGetFramebufferSize(s_instance->m_glfwWindow, nullptr, &height);
-    return static_cast<unsigned int>(height);
+	return s_instance->m_height;
 }
 
 unsigned int Application::width() {
     int width;
     glfwGetFramebufferSize(s_instance->m_glfwWindow, &width, nullptr);
-    return static_cast<unsigned int>(width);
+	return s_instance->m_width;
+}
+
+float Application::hscale() {
+    return s_instance->m_hscale;
+}
+
+float Application::vscale() {
+    return s_instance->m_vscale;
 }
 
 Application* Application::getInstance() {

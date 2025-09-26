@@ -19,8 +19,8 @@ namespace IMGL {
 	static bool s_mouseRightClick = false;
 	static bool s_mouseMiddleClick = false;
 
-	static std::vector<void(*)(int key, int action, int mod)> s_keyCallbacks;
-	static std::vector<void(*)(unsigned int codepoint)> s_charCallbacks;
+	static std::vector<KeyEventCallbackFunc> s_keyCallbacks;
+	static std::vector<CharEventCallbackFunc> s_charCallbacks;
 
     static CursorShape s_currentCursorShape = CURSOR_ARROW;
 
@@ -86,7 +86,7 @@ namespace IMGL {
     std::shared_ptr<Container> GetMouseOverContainer() {
         for (auto it = GetFocusStack().rbegin(); it != GetFocusStack().rend(); ++it) {
             std::shared_ptr<Container> container = *it;
-			if (CheckRectangleBounds(container->x, container->y, container->width, container->height, s_mouseX, s_mouseY)) {
+			if (CheckRectangleBoundsGlobal(container->x, container->y, container->width, container->height, s_mouseX, s_mouseY)) {
                 return container;
             }
         }
@@ -120,11 +120,11 @@ namespace IMGL {
         middle = s_mouseButtonStates[GLFW_MOUSE_BUTTON_MIDDLE];
     }
 
-    void AddKeyEventCallback(void func(int key, int action, int mod)) {
+    void AddKeyEventCallback(KeyEventCallbackFunc func) {
 		s_keyCallbacks.push_back(func);
     }
 
-    void AddCharEventCallback(void func(unsigned int codepoint)) {
+    void AddCharEventCallback(CharEventCallbackFunc func) {
         s_charCallbacks.push_back(func);
     }
 
